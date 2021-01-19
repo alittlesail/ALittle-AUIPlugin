@@ -32,7 +32,8 @@ AUIPlugin.__Plugin_Setup = function(control, module_base_path, script_base_path)
 		await RequireFromPaths(script_base_path, "AUI/", ["AUIWebLoginManager.alittle", "AUIVersionManager.alittle", "AUITool.alittle"
 			, "AUIStatLayout.alittle", "AUIRightMenu.alittle", "AUIImageCutPlugin.alittle"
 			, "AUIIMEManager.alittle", "AUIFileTreeLayout.alittle", "AUIFileSelectLayout.alittle"
-			, "AUIFileSelectDialog.alittle", "AUIEditImageDialog.alittle", "AUIDrawingBoard.alittle"]);
+			, "AUIFileSelectDialog.alittle", "AUIFileRemoteSelectLayout.alittle", "AUIEditImageDialog.alittle"
+			, "AUIDrawingBoard.alittle"]);
 		await RequireFromPaths(script_base_path, "AUICodeEdit/", ["AUICodeSelectCursor.alittle", "AUICodeRevocation.alittle", "AUICodeProject.alittle"
 			, "AUICodeParamList.alittle", "AUICodeLineNumber.alittle", "AUICodeLineContainer.alittle"
 			, "AUICodeLanguage.alittle", "AUICodeFilterScreen.alittle", "AUICodeEdit.alittle"

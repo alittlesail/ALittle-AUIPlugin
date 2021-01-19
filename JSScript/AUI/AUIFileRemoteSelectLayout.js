@@ -20,6 +20,12 @@ name_list : ["path","directory"],
 type_list : ["string","bool"],
 option_map : {}
 })
+ALittle.RegStruct(958494922, "ALittle.UIChangedEvent", {
+name : "ALittle.UIChangedEvent", ns_name : "ALittle", rl_name : "UIChangedEvent", hash_code : 958494922,
+name_list : ["target"],
+type_list : ["ALittle.DisplayObject"],
+option_map : {}
+})
 ALittle.RegStruct(-449066808, "ALittle.UIClickEvent", {
 name : "ALittle.UIClickEvent", ns_name : "ALittle", rl_name : "UIClickEvent", hash_code : -449066808,
 name_list : ["target","is_drag","count"],
@@ -46,12 +52,14 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 				this._ext_map[ALittle.String_Upper(ext)] = true;
 			}
 		}
+		this._cur_selected = undefined;
 	},
 	Release : function() {
 		if (this._thread !== undefined) {
 			ALittle.Coroutine.Resume(this._thread, undefined);
 			this._thread = undefined;
 		}
+		this._cur_selected = undefined;
 	},
 	get base_path() {
 		return this._base_path;
@@ -89,6 +97,7 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		info.file.visible = true;
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(___all_struct.get(-449066808), this, this.HandleItemClick);
+		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemSelected);
 		info.button.group = this._group;
 		let user_data = {};
 		user_data.path = rel_path;
@@ -105,6 +114,7 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		info.dir.visible = true;
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(___all_struct.get(-449066808), this, this.HandleItemClick);
+		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemSelected);
 		info.button.group = this._group;
 		let user_data = {};
 		user_data.path = rel_path;
@@ -112,6 +122,16 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		info.button._user_data = user_data;
 		item._user_data = user_data;
 		return item;
+	},
+	HandleSelectConfirmClick : function(event) {
+		if (this._cur_selected === undefined) {
+			g_AUITool.ShowNotice("提示", "请先选中文件或者文件夹");
+			return;
+		}
+		if (this._thread !== undefined) {
+			ALittle.Coroutine.Resume(this._thread, this._base_path + "\\" + this._cur_selected.path);
+			this._thread = undefined;
+		}
 	},
 	GetNameListByDir : function(browser_path) {
 		return new Promise((function(___COROUTINE, ___) {
@@ -127,10 +147,9 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 			for (let file in ___OBJECT_2) {
 				let info = ___OBJECT_2[file];
 				if (info === undefined) continue;
-				let path = browser_path + "/" + file;
+				let path = browser_path + "\\" + file;
 				let rel_path = ALittle.String_Sub(path, ALittle.String_Len(this._base_path) + 2);
-				let attr = ALittle.File_GetFileAttr(path);
-				if (attr.directory) {
+				if (info.directory) {
 					let item = this.CreateDirItem(file, rel_path, path);
 					if (item !== undefined) {
 						ALittle.List_Push(item_list_dir, item);
@@ -187,23 +206,17 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		}
 	},
 	Refresh : async function() {
+		this._cur_selected = undefined;
 		this._scroll_list.RemoveAllChild();
 		this._path_input.text = ALittle.String_Sub(this._real_path, ALittle.String_Len(this._base_path) + 2);
 		let [item_list_dir, item_list_img] = await this.BrowserCollect(this._real_path);
 		this.CreateItemAndAddToList(item_list_dir, item_list_img);
 	},
 	SetPath : function(base_path, rel_path) {
-		if (base_path !== undefined && rel_path !== undefined) {
-			let attr = ALittle.File_GetFileAttr(base_path + "/" + rel_path);
-			if (attr === undefined || attr.directory !== true) {
-				g_AUITool.ShowNotice("错误", "无效路径");
-				return false;
-			}
-		}
 		this._base_path = base_path;
 		this._real_path = base_path;
 		if (rel_path !== undefined && rel_path !== "") {
-			this._real_path = this._real_path + "/" + rel_path;
+			this._real_path = this._real_path + "\\" + rel_path;
 		}
 		if (this._base_path !== undefined) {
 			this.Refresh();
@@ -230,10 +243,15 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 	},
 	HandleItemClick : function(event) {
 		let user_data = event.target._user_data;
-		if (user_data.directory) {
-			this._real_path = this._base_path + "/" + user_data.path;
-			this.Refresh();
+		if (event.count > 1) {
+			if (user_data.directory) {
+				this._real_path = this._base_path + "\\" + user_data.path;
+				this.Refresh();
+			}
 		}
+	},
+	HandleItemSelected : function(event) {
+		this._cur_selected = event.target._user_data;
 	},
 	CheckResourceName : function(name) {
 		let len = ALittle.String_Len(name);
