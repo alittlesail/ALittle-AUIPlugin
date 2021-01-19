@@ -27,6 +27,12 @@ name_list = {"path","directory"},
 type_list = {"string","bool"},
 option_map = {}
 })
+ALittle.RegStruct(958494922, "ALittle.UIChangedEvent", {
+name = "ALittle.UIChangedEvent", ns_name = "ALittle", rl_name = "UIChangedEvent", hash_code = 958494922,
+name_list = {"target"},
+type_list = {"ALittle.DisplayObject"},
+option_map = {}
+})
 ALittle.RegStruct(-449066808, "ALittle.UIClickEvent", {
 name = "ALittle.UIClickEvent", ns_name = "ALittle", rl_name = "UIClickEvent", hash_code = -449066808,
 name_list = {"target","is_drag","count"},
@@ -52,6 +58,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:Init(ext_list)
 			self._ext_map[ALittle.String_Upper(ext)] = true
 		end
 	end
+	self._cur_selected = nil
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:Release()
@@ -59,6 +66,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:Release()
 		ALittle.Coroutine.Resume(self._thread, nil)
 		self._thread = nil
 	end
+	self._cur_selected = nil
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout.__getter:base_path()
@@ -102,6 +110,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateFileItem(file_name, rel_path,
 	info.file.visible = true
 	info.button.drag_trans_target = self._scroll_list
 	info.button:AddEventListener(___all_struct[-449066808], self, self.HandleItemClick)
+	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemSelected)
 	info.button.group = self._group
 	local user_data = {}
 	user_data.path = rel_path
@@ -119,6 +128,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateDirItem(file_name, rel_path, 
 	info.dir.visible = true
 	info.button.drag_trans_target = self._scroll_list
 	info.button:AddEventListener(___all_struct[-449066808], self, self.HandleItemClick)
+	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemSelected)
 	info.button.group = self._group
 	local user_data = {}
 	user_data.path = rel_path
@@ -126,6 +136,17 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateDirItem(file_name, rel_path, 
 	info.button._user_data = user_data
 	item._user_data = user_data
 	return item
+end
+
+function AUIPlugin.AUIFileRemoteSelectLayout:HandleSelectConfirmClick(event)
+	if self._cur_selected == nil then
+		g_AUITool:ShowNotice("提示", "请先选中文件或者文件夹")
+		return
+	end
+	if self._thread ~= nil then
+		ALittle.Coroutine.Resume(self._thread, self._base_path .. "\\" .. self._cur_selected.path)
+		self._thread = nil
+	end
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:GetNameListByDir(browser_path)
@@ -139,10 +160,9 @@ function AUIPlugin.AUIFileRemoteSelectLayout:BrowserCollect(browser_path)
 	local item_list_img = {}
 	local file_map = self:GetNameListByDir(browser_path)
 	for file, info in ___pairs(file_map) do
-		local path = browser_path .. "/" .. file
+		local path = browser_path .. "\\" .. file
 		local rel_path = ALittle.String_Sub(path, ALittle.String_Len(self._base_path) + 2)
-		local attr = ALittle.File_GetFileAttr(path)
-		if attr.directory then
+		if info.directory then
 			local item = self:CreateDirItem(file, rel_path, path)
 			if item ~= nil then
 				ALittle.List_Push(item_list_dir, item)
@@ -192,6 +212,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateItemAndAddToList(item_list_di
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:Refresh()
+	self._cur_selected = nil
 	self._scroll_list:RemoveAllChild()
 	self._path_input.text = ALittle.String_Sub(self._real_path, ALittle.String_Len(self._base_path) + 2)
 	local item_list_dir, item_list_img = self:BrowserCollect(self._real_path)
@@ -200,17 +221,10 @@ end
 AUIPlugin.AUIFileRemoteSelectLayout.Refresh = Lua.CoWrap(AUIPlugin.AUIFileRemoteSelectLayout.Refresh)
 
 function AUIPlugin.AUIFileRemoteSelectLayout:SetPath(base_path, rel_path)
-	if base_path ~= nil and rel_path ~= nil then
-		local attr = ALittle.File_GetFileAttr(base_path .. "/" .. rel_path)
-		if attr == nil or attr.directory ~= true then
-			g_AUITool:ShowNotice("错误", "无效路径")
-			return false
-		end
-	end
 	self._base_path = base_path
 	self._real_path = base_path
 	if rel_path ~= nil and rel_path ~= "" then
-		self._real_path = self._real_path .. "/" .. rel_path
+		self._real_path = self._real_path .. "\\" .. rel_path
 	end
 	if self._base_path ~= nil then
 		self:Refresh()
@@ -241,10 +255,16 @@ end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemClick(event)
 	local user_data = event.target._user_data
-	if user_data.directory then
-		self._real_path = self._base_path .. "/" .. user_data.path
-		self:Refresh()
+	if event.count > 1 then
+		if user_data.directory then
+			self._real_path = self._base_path .. "\\" .. user_data.path
+			self:Refresh()
+		end
 	end
+end
+
+function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemSelected(event)
+	self._cur_selected = event.target._user_data
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:CheckResourceName(name)
