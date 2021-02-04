@@ -92,10 +92,10 @@ AUIPlugin.AUIWebLoginManager = JavaScript.Class(ALittle.EventDispatcher, {
 	get msg_client() {
 		return this._msg_client;
 	},
-	Setup : function(ip, port, is_logingate, config) {
+	Setup : function(ip, port, logingate_type, config) {
 		this._logingate_ip = ip;
 		this._logingate_port = port;
-		this._is_logingate = is_logingate;
+		this._logingate_type = logingate_type;
 		this._config = config;
 		this._session_id = "";
 		this._account_info = {};
@@ -131,9 +131,9 @@ AUIPlugin.AUIWebLoginManager = JavaScript.Class(ALittle.EventDispatcher, {
 	Connect : async function() {
 		let client_ip = this._logingate_ip;
 		let client_port = this._logingate_port;
-		if (this._is_logingate) {
+		if (this._logingate_type !== undefined) {
 			let param = {};
-			param.route_type = 3;
+			param.route_type = this._logingate_type;
 			let client = ALittle.CreateHttpSender(this._logingate_ip, this._logingate_port);
 			let [error, result] = await ALittle.IHttpSender.Invoke("GatewayServer.QRouteInfo", client, param);
 			if (error !== undefined) {

@@ -9,7 +9,7 @@ public class AUIWebLoginManager : ALittle.EventDispatcher
 {
 	private string _logingate_ip;
 	private int _logingate_port;
-    private bool _is_logingate;
+    private int _logingate_type;
 
 	private string _version_ip;
 	private int _version_port;
@@ -45,12 +45,13 @@ public class AUIWebLoginManager : ALittle.EventDispatcher
 
     public get msg_client() : ALittle.IMsgCommonTemplate { return this._msg_client; }
 
-	public fun Setup(string ip, int port, bool is_logingate, ALittle.IJsonConfig config)
+    // logingate_type 表示要通过网关服务器查询的服务器类型，如果不想通过王国服务器，那么就填null
+	public fun Setup(string ip, int port, int logingate_type, ALittle.IJsonConfig config)
 	{
 		// 登录网关
 		this._logingate_ip = ip;
 		this._logingate_port = port;
-        this._is_logingate = is_logingate;
+        this._logingate_type = logingate_type;
 		this._config = config;
 	
 		// 短链接会话ID
@@ -106,10 +107,10 @@ public class AUIWebLoginManager : ALittle.EventDispatcher
         var client_ip:string = this._logingate_ip;
         var client_port:int = this._logingate_port;
 
-        if (this._is_logingate)
+        if (this._logingate_type != null)
         {
             var param = new GatewayServer.QRouteInfo();
-            param.route_type = ALittle.RouteType.RT_VERSION; // 版本服务器
+            param.route_type = this._logingate_type; // 版本服务器
             var client = ALittle.CreateHttpSender(this._logingate_ip, this._logingate_port);
             var error, result = GatewayServer.HandleQRouteInfo(client, param);
             if (error != null)

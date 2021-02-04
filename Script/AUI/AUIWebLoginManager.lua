@@ -100,10 +100,10 @@ function AUIPlugin.AUIWebLoginManager.__getter:msg_client()
 	return self._msg_client
 end
 
-function AUIPlugin.AUIWebLoginManager:Setup(ip, port, is_logingate, config)
+function AUIPlugin.AUIWebLoginManager:Setup(ip, port, logingate_type, config)
 	self._logingate_ip = ip
 	self._logingate_port = port
-	self._is_logingate = is_logingate
+	self._logingate_type = logingate_type
 	self._config = config
 	self._session_id = ""
 	self._account_info = {}
@@ -141,9 +141,9 @@ end
 function AUIPlugin.AUIWebLoginManager:Connect()
 	local client_ip = self._logingate_ip
 	local client_port = self._logingate_port
-	if self._is_logingate then
+	if self._logingate_type ~= nil then
 		local param = {}
-		param.route_type = 3
+		param.route_type = self._logingate_type
 		local client = ALittle.CreateHttpSender(self._logingate_ip, self._logingate_port)
 		local error, result = ALittle.IHttpSender.Invoke("GatewayServer.QRouteInfo", client, param)
 		if error ~= nil then
