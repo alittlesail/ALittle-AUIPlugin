@@ -509,6 +509,7 @@ function AUIPlugin.AUIFileSelectLayout:HandleItemPreViewCallback(image, result)
 	image.height = image.texture_height * min_rate
 	self._image_pre_dialog.width = image.width + 10
 	self._image_pre_dialog.height = self._image_pre_dialog.head_size + image.height + 10
+	self._image_pre_dialog.title = "图片预览:" .. image.texture_width .. "X" .. image.texture_height
 end
 
 function AUIPlugin.AUIFileSelectLayout:HandleItemMoveOut(event)

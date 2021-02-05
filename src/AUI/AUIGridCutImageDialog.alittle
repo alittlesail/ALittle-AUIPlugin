@@ -1,0 +1,122 @@
+
+namespace AUIPlugin;
+
+public class AUIGridCutImageDialog
+{
+	private ALittle.DisplayObject _dialog;
+
+    private ALittle.DisplayObject _cut_width;
+    private ALittle.DisplayObject _cut_height;
+    private ALittle.DisplayObject _name_prefix;
+    private ALittle.DisplayObject _save_path;
+    private string _image_path;
+
+	public fun HideDialog()
+	{
+		if (this._dialog != null)
+			this._dialog.visible = false;
+	}
+
+	public fun ShowDialog(string path)
+	{
+		// 创建模态提示对话框，并添加到模态层
+		if (this._dialog == null)
+		{
+			this._dialog = g_Control.CreateControl{ALittle.DisplayObject}("aui_image_grid_cut_dialog", this);
+			A_LayerManager.AddToModal(this._dialog);
+
+            this._cut_width.text = 32;
+            this._cut_height.text = 32;
+            this._name_prefix.text = "cut_";
+		}
+	
+        this._image_path = path;
+		this._dialog.visible = true;
+	}
+
+	public fun Shutdown()
+	{
+        if (this._dialog != null)
+		{
+			A_LayerManager.RemoveFromModal(this._dialog);
+			this._dialog = null;
+        }
+    }
+
+    private fun HandleSelectSaveClick(ALittle.UISystemSelectDirectoryEvent event)
+    {
+        if (event.path == null || event.path == "") return;
+        this._save_path.text = event.path;
+    }
+
+	private fun HandleCancelClick(ALittle.UIEvent event)
+	{
+		this.HideDialog();
+	}
+
+	private fun HandleConfirmClick(ALittle.UIEvent event)
+	{
+        var width = ALittle.Math_ToInt(this._cut_width.text);
+        var height = ALittle.Math_ToInt(this._cut_height.text);
+        if (width == null || height <= 0 || height == null || height <= 0)
+        {
+            g_AUITool.ShowNotice("提示", "请输入有效的宽和高");
+            return;
+        }
+
+        var attr = ALittle.File_GetFileAttr(this._save_path.text);
+        if (attr == null || !attr.directory)
+        {
+            g_AUITool.ShowNotice("提示", "请输入有效的保存路径");
+            return;
+        }
+        var save_path = ALittle.File_PathEndWithSplit(this._save_path.text);
+        var name_prefix = this._name_prefix.text;
+
+        // 加载图片
+        var surface = carp.LoadCarpSurface(this._image_path);
+        if (surface == null)
+        {
+            g_AUITool.ShowNotice("提示", "图片加载失败");
+            return;
+        }
+
+        var total_width = carp.GetCarpSurfaceWidth(surface);
+        var total_height = carp.GetCarpSurfaceHeight(surface);
+
+        var index = 0;
+
+        var offset_y = 0;
+        while (offset_y < total_height)
+        {
+            var real_height = total_height - offset_y;
+            if (real_height > height) real_height = height;
+
+            var offset_x = 0;
+            while (offset_x < total_width)
+            {
+                var real_width = total_width - offset_x;
+                if (real_width > width) real_width = width;
+
+                var sub_surface = carp.CreateCarpSurface(real_width, real_height);
+                if (sub_surface != null)
+                {
+                    carp.CutBlitCarpSurface(surface
+                                           , sub_surface
+                                           , offset_x..","..offset_y..","..real_width..","..real_height
+                                           , "0,0,"..real_width..","..real_height);
+                    carp.SaveCarpSurface(sub_surface, save_path..name_prefix..index..".png");
+                    carp.FreeCarpSurface(sub_surface);
+
+                    ++index;
+                }
+                offset_x += real_width;
+            }
+            offset_y += real_height;
+        }
+
+        carp.FreeCarpSurface(surface);
+
+		this.HideDialog();
+	}
+}

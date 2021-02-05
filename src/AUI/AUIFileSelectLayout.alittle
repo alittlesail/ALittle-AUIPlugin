@@ -554,6 +554,7 @@ public class AUIFileSelectLayout : ALittle.DisplayLayout
 
 		this._image_pre_dialog.width = image.width + 10;
 		this._image_pre_dialog.height = this._image_pre_dialog.head_size + image.height + 10;
+        this._image_pre_dialog.title = "图片预览:"..image.texture_width.."X"..image.texture_height;
 	}
 
 	public fun HandleItemMoveOut(ALittle.UIMoveOutEvent event)
