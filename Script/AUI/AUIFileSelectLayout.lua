@@ -485,28 +485,30 @@ function AUIPlugin.AUIFileSelectLayout:HandleItemMoveIn(event)
 end
 
 function AUIPlugin.AUIFileSelectLayout:HandleItemPreViewCallback(image, result)
+	if not result then
+		return
+	end
 	local width = image.texture_width
-	image.width = width
+	if width > A_UISystem.view_width / 4 then
+		width = A_UISystem.view_width / 4
+	end
 	if width < 100 then
 		width = 100
 	end
-	if width > A_UISystem.view_width then
-		width = A_UISystem.view_width
-		image.width = width
-	end
-	self._image_pre_dialog.width = width + 10
-	image.x = (self._image_pre_dialog.width - image.width) / 2
+	local width_rate = width / image.texture_width
 	local height = image.texture_height
-	image.height = height
+	if height > (A_UISystem.view_height - self._image_pre_dialog.head_size) / 4 then
+		height = (A_UISystem.view_height - self._image_pre_dialog.head_size) / 4
+	end
 	if height < 50 then
 		height = 50
 	end
-	if height > A_UISystem.view_height - self._image_pre_dialog.head_size then
-		height = A_UISystem.view_height - self._image_pre_dialog.head_size
-		image.height = height
-	end
-	image.y = (height + 5 - image.height) / 2
-	self._image_pre_dialog.height = self._image_pre_dialog.head_size + height + 10
+	local height_rate = height / image.texture_height
+	local min_rate = ALittle.Math_Min(width_rate, height_rate)
+	image.width = image.texture_width * min_rate
+	image.height = image.texture_height * min_rate
+	self._image_pre_dialog.width = image.width + 10
+	self._image_pre_dialog.height = self._image_pre_dialog.head_size + image.height + 10
 end
 
 function AUIPlugin.AUIFileSelectLayout:HandleItemMoveOut(event)
