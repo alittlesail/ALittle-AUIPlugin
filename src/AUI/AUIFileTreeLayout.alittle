@@ -498,19 +498,23 @@ public class AUIFileTreeItem : AUIFileTreeLogic
             return;
         }
 
-		this._user_info.path = new_path;
-		this._user_info.name = new_name;
-
-		this._item_button.text = this._user_info.name;
-
+        // 先提示删除
         if (this._user_info.on_delete_file != null)
         	this._user_info.on_delete_file(old_path);
 
+        // 重命名
 		ALittle.File_RenameFile(old_path, new_path);
 
-        var create_event = new AUIFileCreateFileEvent();
-        create_event.path = new_path;
-        this.DispatchEvent(create_event);
+        // 修改数据
+		this._user_info.path = new_path;
+		this._user_info.name = new_name;
+
+        // 修改表现
+		this._item_button.text = this._user_info.name;
+
+        // 提示创建文件
+        if (this._user_info.on_create_file != null)
+        	this._user_info.on_create_file(new_path);
     }
 }
 

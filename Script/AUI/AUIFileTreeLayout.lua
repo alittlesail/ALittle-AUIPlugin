@@ -575,16 +575,16 @@ function AUIPlugin.AUIFileTreeItem:HandleRenameFile()
 		g_AUITool:ShowNotice("提示", "文件名已存在")
 		return
 	end
-	self._user_info.path = new_path
-	self._user_info.name = new_name
-	self._item_button.text = self._user_info.name
 	if self._user_info.on_delete_file ~= nil then
 		self._user_info.on_delete_file(old_path)
 	end
 	ALittle.File_RenameFile(old_path, new_path)
-	local create_event = {}
-	create_event.path = new_path
-	self:DispatchEvent(___all_struct[-2082217254], create_event)
+	self._user_info.path = new_path
+	self._user_info.name = new_name
+	self._item_button.text = self._user_info.name
+	if self._user_info.on_create_file ~= nil then
+		self._user_info.on_create_file(new_path)
+	end
 end
 AUIPlugin.AUIFileTreeItem.HandleRenameFile = Lua.CoWrap(AUIPlugin.AUIFileTreeItem.HandleRenameFile)
 
