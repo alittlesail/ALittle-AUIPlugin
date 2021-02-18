@@ -1336,9 +1336,9 @@ function AUIPlugin.AUICodeEdit:HandleKeyDown(event)
 				local old_line = self._cursor.line
 				is_change = self:InsertText(ALittle.System_GetClipboardText(), true)
 				local new_line = self._cursor.line
+				self:MultiLineFormat(old_line, new_line)
 				self._complete_screen:Hide()
 				self._param_dialog:Hide()
-				self:MultiLineFormat(old_line, new_line)
 			end
 			event.handled = true
 		end
