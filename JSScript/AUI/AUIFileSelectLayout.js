@@ -471,28 +471,31 @@ AUIPlugin.AUIFileSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		this.UpdateImagePreDialogPos();
 	},
 	HandleItemPreViewCallback : function(image, result) {
+		if (!result) {
+			return;
+		}
 		let width = image.texture_width;
-		image.width = width;
+		if (width > A_UISystem.view_width / 4) {
+			width = A_UISystem.view_width / 4;
+		}
 		if (width < 100) {
 			width = 100;
 		}
-		if (width > A_UISystem.view_width) {
-			width = A_UISystem.view_width;
-			image.width = width;
-		}
-		this._image_pre_dialog.width = width + 10;
-		image.x = (this._image_pre_dialog.width - image.width) / 2;
+		let width_rate = width / image.texture_width;
 		let height = image.texture_height;
-		image.height = height;
+		if (height > (A_UISystem.view_height - this._image_pre_dialog.head_size) / 4) {
+			height = (A_UISystem.view_height - this._image_pre_dialog.head_size) / 4;
+		}
 		if (height < 50) {
 			height = 50;
 		}
-		if (height > A_UISystem.view_height - this._image_pre_dialog.head_size) {
-			height = A_UISystem.view_height - this._image_pre_dialog.head_size;
-			image.height = height;
-		}
-		image.y = (height + 5 - image.height) / 2;
-		this._image_pre_dialog.height = this._image_pre_dialog.head_size + height + 10;
+		let height_rate = height / image.texture_height;
+		let min_rate = ALittle.Math_Min(width_rate, height_rate);
+		image.width = image.texture_width * min_rate;
+		image.height = image.texture_height * min_rate;
+		this._image_pre_dialog.width = image.width + 10;
+		this._image_pre_dialog.height = this._image_pre_dialog.head_size + image.height + 10;
+		this._image_pre_dialog.title = "图片预览:" + image.texture_width + "X" + image.texture_height;
 	},
 	HandleItemMoveOut : function(event) {
 		A_LayerManager.RemoveFromTip(this._image_pre_dialog);

@@ -1263,9 +1263,9 @@ AUIPlugin.AUICodeEdit = JavaScript.Class(ALittle.DisplayLayout, {
 					let old_line = this._cursor.line;
 					is_change = this.InsertText(ALittle.System_GetClipboardText(), true);
 					let new_line = this._cursor.line;
+					this.MultiLineFormat(old_line, new_line);
 					this._complete_screen.Hide();
 					this._param_dialog.Hide();
-					this.MultiLineFormat(old_line, new_line);
 				}
 				event.handled = true;
 			}

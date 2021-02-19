@@ -541,16 +541,16 @@ AUIPlugin.AUIFileTreeItem = JavaScript.Class(AUIPlugin.AUIFileTreeLogic, {
 			g_AUITool.ShowNotice("提示", "文件名已存在");
 			return;
 		}
-		this._user_info.path = new_path;
-		this._user_info.name = new_name;
-		this._item_button.text = this._user_info.name;
 		if (this._user_info.on_delete_file !== undefined) {
 			this._user_info.on_delete_file(old_path);
 		}
 		ALittle.File_RenameFile(old_path, new_path);
-		let create_event = {};
-		create_event.path = new_path;
-		this.DispatchEvent(___all_struct.get(-2082217254), create_event);
+		this._user_info.path = new_path;
+		this._user_info.name = new_name;
+		this._item_button.text = this._user_info.name;
+		if (this._user_info.on_create_file !== undefined) {
+			this._user_info.on_create_file(new_path);
+		}
 	},
 }, "AUIPlugin.AUIFileTreeItem");
 
