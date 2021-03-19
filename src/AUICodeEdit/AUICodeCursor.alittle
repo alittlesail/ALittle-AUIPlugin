@@ -312,7 +312,7 @@ public class AUICodeCursor : ALittle.Quad
                 if (ALittle.String_IsCodeChar(line.char_list[it_char].char) != is_code
                 || ALittle.String_IsAsciiChar(line.char_list[it_char].char) != is_ascii)
                 {
-                    this.SetLineChar(this._it_line, it_char);
+                    this.SetLineChar(this._it_line, it_char - 1);
                     return;   
                 }   
                 ++ it_char;

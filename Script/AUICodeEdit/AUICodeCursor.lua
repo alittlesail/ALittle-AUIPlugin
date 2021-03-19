@@ -293,7 +293,7 @@ function AUIPlugin.AUICodeCursor:OffsetRight(ctrl)
 		local it_char = self._it_char + 1
 		while it_char <= count do
 			if ALittle.String_IsCodeChar(line.char_list[it_char].char) ~= is_code or ALittle.String_IsAsciiChar(line.char_list[it_char].char) ~= is_ascii then
-				self:SetLineChar(self._it_line, it_char)
+				self:SetLineChar(self._it_line, it_char - 1)
 				return
 			end
 			it_char = it_char + 1

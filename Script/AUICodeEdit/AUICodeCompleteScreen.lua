@@ -284,8 +284,6 @@ function AUIPlugin.AUICodeCompleteScreen:Fliter(text)
 	local x, y = self._screen:LocalToGlobal(self._edit)
 	if y + self._screen.height > self._edit.height or self._screen.y + self._screen.height < edit_y then
 		self._screen.y = edit_y - self._screen.height
-	else
-		self._screen.y = edit_y + AUIPlugin.CODE_LINE_HEIGHT
 	end
 	return true
 end
