@@ -1,26 +1,28 @@
 
 namespace AUIPlugin;
 
+// 向左删除一个字
 public class AUICodeDeleteLeftRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
 	// 删除之前的光标位置
 	private int _old_it_line;
 	private int _old_it_char;
 	// 删除之后的光标位置
 	private int _new_it_line;
 	private int _new_it_char;
+    // 删除的内容
 	private string _content;
+    // 是否派发通知事件
 	private bool _dispatch_event;
 	
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line, int old_it_char
 			, int new_it_line, int new_it_char
 			, string content, bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -31,41 +33,51 @@ public class AUICodeDeleteLeftRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
-		this._cursor.DeleteLeft(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置插入光标
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+        // 向左删除
+		this._edit.cursor.DeleteLeft(false);
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 	
 	public fun Back()
 	{
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置插入光标
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 插入文本
 		this._edit.InsertText(this._content, false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }
 
+// 向右删除一个字
 public class AUICodeDeleteRightRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
 	// 删除之前的光标位置
 	private int _old_it_line;
 	private int _old_it_char;
 	// 删除之后的光标位置
 	private int _new_it_line;
 	private int _new_it_char;
+    // 删除的内容
 	private string _content;
+    // 是否派发通知事件
 	private bool _dispatch_event;
 
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line, int old_it_char
 			, int new_it_line, int new_it_char
 			, string content, bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -76,44 +88,52 @@ public class AUICodeDeleteRightRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
-		this._cursor.DeleteRight(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置插入光标
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+        // 删除字符
+		this._edit.cursor.DeleteRight(false);
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 
 	public fun Back()
 	{
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置删除后的光标
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 插入文本
 		this._edit.InsertText(this._content, false);
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 再设置光标
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }
 
 public class AUICodeInsertTextRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
-	private AUICodeSelectCursor _select_cursor;
-	// 删除之前的光标位置
+	// 插入之前的光标位置
 	private int _old_it_line;
 	private int _old_it_char;
-	// 删除之后的光标位置
+	// 插入之后的光标位置
 	private int _new_it_line;
 	private int _new_it_char;
+    // 插入的文本
 	private string _content;
+    // 是否派发通知事件
 	private bool _dispatch_event;
 
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor, AUICodeSelectCursor select_cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line, int old_it_char
 			, int new_it_line, int new_it_char
 			, string content, bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -124,28 +144,34 @@ public class AUICodeInsertTextRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置插入光标
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+        // 插入文本
 		this._edit.InsertText(this._content, false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 
 	public fun Back()
 	{
-		this._select_cursor.StartLineChar(this._old_it_line, this._old_it_char);
-		this._select_cursor.UpdateLineChar(this._new_it_line, this._new_it_char);
-		this._select_cursor.DeleteSelect(false);
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 设置区域光标位置
+		this._edit.select_cursor.StartLineChar(this._old_it_line, this._old_it_char);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line, this._new_it_char);
+        // 删除文本
+		this._edit.select_cursor.DeleteSelect(false);
+        // 设置插入光标
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+        // 派发变更事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }
 
 public class AUICodeDeleteSelectRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
-	private AUICodeSelectCursor _select_cursor;
 	// 删除之前的光标位置
 	private int _old_it_line_start;
 	private int _old_it_char_start;
@@ -154,18 +180,17 @@ public class AUICodeDeleteSelectRevoke : ALittle.RevokeObject
 	// 删除之后的光标位置
 	private int _new_it_line;
 	private int _new_it_char;
-
+    // 删除内容
 	private string _content;
+    // 是否派发通知事件
 	private bool _dispatch_event;
 
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor, AUICodeSelectCursor select_cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line_start, int old_it_char_start, int old_it_line_end, int old_it_char_end
 			, int new_it_line, int new_it_char
 			, string content, bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -178,48 +203,53 @@ public class AUICodeDeleteSelectRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
-		this._select_cursor.DeleteSelect(false);
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 设置区域光标
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+        // 删除选中
+		this._edit.select_cursor.DeleteSelect(false);
+        // 设置光标位置
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 派发事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 
 	public fun Back()
 	{
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 隐藏选中光标
+        this._edit.select_cursor.Hide();
+        // 设置光标位置
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
+        // 插入文本
 		this._edit.InsertText(this._content, false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发通知事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }
 
 public class AUICodeMultiTabInsertRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
-	private AUICodeSelectCursor _select_cursor;
-	// 删除之前的光标位置
+	// 插入之前的光标位置
 	private int _old_it_line_start;
 	private int _old_it_char_start;
 	private int _old_it_line_end;
 	private int _old_it_char_end;
-	// 删除之后的光标位置
+	// 插入之后的光标位置
 	private int _new_it_line_start;
 	private int _new_it_char_start;
 	private int _new_it_line_end;
 	private int _new_it_char_end;
+    // 是否派发通知事件
 	private bool _dispatch_event;
 
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor, AUICodeSelectCursor select_cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line_start, int old_it_char_start, int old_it_line_end, int old_it_char_end
 			, int new_it_line_start, int new_it_char_start, int new_it_line_end, int new_it_char_end
             , bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -235,28 +265,31 @@ public class AUICodeMultiTabInsertRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+        // 设置区域光标
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+        // 执行多行tab插入
 		this._edit.MultiTabInsert(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发通知事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 
 	public fun Back()
 	{
-		this._select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
-		this._select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+        // 设置区域光标
+		this._edit.select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+        // 执行多行tab删除
 		this._edit.MultiTabDelete(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发事件通知
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }
 
 public class AUICodeMultiTabDeleteRevoke : ALittle.RevokeObject
 {
+    // 编辑控件
 	private AUICodeEdit _edit;
-	private AUICodeCursor _cursor;
-	private AUICodeSelectCursor _select_cursor;
 	// 删除之前的光标位置
 	private int _old_it_line_start;
 	private int _old_it_char_start;
@@ -267,16 +300,15 @@ public class AUICodeMultiTabDeleteRevoke : ALittle.RevokeObject
 	private int _new_it_char_start;
 	private int _new_it_line_end;
 	private int _new_it_char_end;
+    // 是否派发事件
 	private bool _dispatch_event;
 
-	public ctor(AUICodeEdit edit, AUICodeCursor cursor, AUICodeSelectCursor select_cursor
+	public ctor(AUICodeEdit edit
 			, int old_it_line_start, int old_it_char_start, int old_it_line_end, int old_it_char_end
 			, int new_it_line_start, int new_it_char_start, int new_it_line_end, int new_it_char_end
             , bool dispatch_event)
 	{
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -292,19 +324,23 @@ public class AUICodeMultiTabDeleteRevoke : ALittle.RevokeObject
 
 	public fun Forward()
 	{
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+        // 设置区域光标
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+        // 执行多行删除
 		this._edit.MultiTabDelete(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 
 	public fun Back()
 	{
-		this._select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
-		this._select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+        // 设置区域光标
+		this._edit.select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+        // 执行多行插入
 		this._edit.MultiTabInsert(false);
-		if (this._dispatch_event)
-			this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 派发事件
+		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
 	}
 }

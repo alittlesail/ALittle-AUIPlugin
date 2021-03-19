@@ -359,7 +359,7 @@ public class AUICodeSelectCursor
             
             if (need_revoke)
             {
-                var revoke = new AUICodeDeleteSelectRevoke(this._edit, this._edit.cursor, this
+                var revoke = new AUICodeDeleteSelectRevoke(this._edit
                             , old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end
                             , it_line_start, it_char_start, revoke_content, revoke_bind == null);
                 if (revoke_bind != null)
@@ -478,7 +478,7 @@ public class AUICodeSelectCursor
 
         if (need_revoke)
         {
-            var revoke = new AUICodeDeleteSelectRevoke(this._edit, this._edit.cursor, this
+            var revoke = new AUICodeDeleteSelectRevoke(this._edit
                 , old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end
             , it_line_start, it_char_start, revoke_start..ALittle.String_Join(revoke_center, "")..revoke_end, revoke_bind == null);
             if (revoke_bind != null)

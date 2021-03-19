@@ -398,7 +398,7 @@ public class AUICodeCursor : ALittle.Quad
                 var new_it_line = this._it_line;
                 var new_it_char = this._it_char;
 
-                var revoke = new AUICodeDeleteLeftRevoke(this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
+                var revoke = new AUICodeDeleteLeftRevoke(this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
                 if (revoke_bind != null)
                     revoke_bind.PushRevoke(revoke);
                 else
@@ -464,7 +464,7 @@ public class AUICodeCursor : ALittle.Quad
 
         if (need_revoke)
         {
-            var revoke = new AUICodeDeleteLeftRevoke(this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
+            var revoke = new AUICodeDeleteLeftRevoke(this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
             if (revoke_bind != null)
                 revoke_bind.PushRevoke(revoke);
             else
@@ -533,7 +533,7 @@ public class AUICodeCursor : ALittle.Quad
 
             if (need_revoke)
             {
-                var revoke = new AUICodeDeleteRightRevoke(this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
+                var revoke = new AUICodeDeleteRightRevoke(this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
                 if (revoke_bind != null)
                     revoke_bind.PushRevoke(revoke);
                 else
@@ -599,7 +599,7 @@ public class AUICodeCursor : ALittle.Quad
 
         if (need_revoke)
         {
-            var revoke = new AUICodeDeleteRightRevoke(this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
+            var revoke = new AUICodeDeleteRightRevoke(this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind == null);
             if (revoke_bind != null)
                 revoke_bind.PushRevoke(revoke);
             else

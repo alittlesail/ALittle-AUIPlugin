@@ -1664,7 +1664,7 @@ function AUIPlugin.AUICodeEdit:MultiTabInsert(need_revoke, revoke_bind)
 		end
 	end
 	if need_revoke then
-		local revoke = AUIPlugin.AUICodeMultiTabInsertRevoke(self, self._cursor, self._select_cursor, old_line_start, old_char_start, old_line_end, old_char_end, self._select_cursor.line_start, self._select_cursor.char_start, self._select_cursor.line_end, self._select_cursor.char_end, revoke_bind == nil)
+		local revoke = AUIPlugin.AUICodeMultiTabInsertRevoke(self, old_line_start, old_char_start, old_line_end, old_char_end, self._select_cursor.line_start, self._select_cursor.char_start, self._select_cursor.line_end, self._select_cursor.char_end, revoke_bind == nil)
 		insert_revoke:PushRevoke(revoke)
 		if revoke_bind == nil then
 			self._revoke_list:PushRevoke(insert_revoke)
@@ -1839,7 +1839,7 @@ function AUIPlugin.AUICodeEdit:MultiTabDelete(need_revoke, revoke_bind)
 			end
 		end
 		if need_revoke then
-			local revoke = AUIPlugin.AUICodeMultiTabDeleteRevoke(self, self._cursor, self._select_cursor, old_line_start, old_char_start, old_line_end, old_char_end, self._select_cursor.line_start, self._select_cursor.char_start, self._select_cursor.line_end, self._select_cursor.char_end, revoke_bind == nil)
+			local revoke = AUIPlugin.AUICodeMultiTabDeleteRevoke(self, old_line_start, old_char_start, old_line_end, old_char_end, self._select_cursor.line_start, self._select_cursor.char_start, self._select_cursor.line_end, self._select_cursor.char_end, revoke_bind == nil)
 			insert_revoke:PushRevoke(revoke)
 			if revoke_bind == nil then
 				self._revoke_list:PushRevoke(insert_revoke)
@@ -2118,7 +2118,7 @@ function AUIPlugin.AUICodeEdit:InsertText(content, need_revoke, revoke_bind)
 	self._code_screen:AdjustScrollBar()
 	self._cursor:SetLineChar(it_cursor_line, it_cursor_char)
 	if need_revoke then
-		local revoke = AUIPlugin.AUICodeInsertTextRevoke(self, self._cursor, self._select_cursor, old_it_line, old_it_char, it_cursor_line, it_cursor_char, content, revoke_bind == nil)
+		local revoke = AUIPlugin.AUICodeInsertTextRevoke(self, old_it_line, old_it_char, it_cursor_line, it_cursor_char, content, revoke_bind == nil)
 		insert_revoke:PushRevoke(revoke)
 		if revoke_bind == nil then
 			self._revoke_list:PushRevoke(insert_revoke)

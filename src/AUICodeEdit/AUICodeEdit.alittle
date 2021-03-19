@@ -1739,7 +1739,7 @@ public class AUICodeEdit : ALittle.DisplayLayout
 
         if (need_revoke)
         {
-            var revoke = new AUICodeMultiTabInsertRevoke(this, this._cursor, this._select_cursor
+            var revoke = new AUICodeMultiTabInsertRevoke(this
             	, old_line_start, old_char_start, old_line_end, old_char_end
             	, this._select_cursor.line_start, this._select_cursor.char_start, this._select_cursor.line_end, this._select_cursor.char_end
             	, revoke_bind == null);
@@ -1927,7 +1927,7 @@ public class AUICodeEdit : ALittle.DisplayLayout
 
         	if (need_revoke)
         	{
-            	var revoke = new AUICodeMultiTabDeleteRevoke(this, this._cursor, this._select_cursor
+            	var revoke = new AUICodeMultiTabDeleteRevoke(this
             		, old_line_start, old_char_start, old_line_end, old_char_end
             		, this._select_cursor.line_start, this._select_cursor.char_start, this._select_cursor.line_end, this._select_cursor.char_end
             		, revoke_bind == null);
@@ -2230,7 +2230,7 @@ public class AUICodeEdit : ALittle.DisplayLayout
 
         if (need_revoke)
         {
-            var revoke = new AUICodeInsertTextRevoke(this, this._cursor, this._select_cursor, old_it_line, old_it_char, it_cursor_line, it_cursor_char, content, revoke_bind == null);
+            var revoke = new AUICodeInsertTextRevoke(this, old_it_line, old_it_char, it_cursor_line, it_cursor_char, content, revoke_bind == null);
             insert_revoke.PushRevoke(revoke);
             if (revoke_bind == null)
                 this._revoke_list.PushRevoke(insert_revoke);
