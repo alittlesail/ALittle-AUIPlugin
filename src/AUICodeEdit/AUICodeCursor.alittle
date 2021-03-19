@@ -104,6 +104,7 @@ public class AUICodeCursor : ALittle.Quad
         return it_start, it_end;
     }
 
+    // 根据指定坐标来获取行列
     public fun SetOffsetXY(double x, double y, [Nullable]bool show)
     {
         if (this._edit.line_count <= 0)
@@ -131,12 +132,14 @@ public class AUICodeCursor : ALittle.Quad
         this._move_acc_width = this.x;
     }
 
+    // 直接设置行列
     public fun SetLineChar(int it_line, int it_char)
     {
         this.SetLineCharInner(it_line, it_char);
         this._move_acc_width = this.x;
     }
 
+    // 内部设置行列
     private fun SetLineCharInner(int it_line, int it_char)
     {
         this._it_line = it_line;
@@ -151,6 +154,7 @@ public class AUICodeCursor : ALittle.Quad
         this._virtual_indent = 0;
     }
 
+    // 判断当前行是否有字符
     public fun CurLineHasChar() : bool
     {
         var line = this._edit.line_list[this._it_line];
@@ -163,6 +167,7 @@ public class AUICodeCursor : ALittle.Quad
         return true;
     }
 
+    // 根据虚拟缩进，调整光标位置
     public fun AdjustShowCursor()
     {
         var line = this._edit.line_list[this._it_line];
@@ -184,6 +189,7 @@ public class AUICodeCursor : ALittle.Quad
         }
     }
 
+    // 更新虚拟缩进
     public fun UpdateVirtualIndent()
     {
         if (this._edit.language != null)
