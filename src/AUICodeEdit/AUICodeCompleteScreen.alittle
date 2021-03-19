@@ -212,7 +212,7 @@ protected class AUICodeCompleteScreen
         // 如果查询不到，那么就直接返回
         if (this._complete == null) return false;
         // 计算坐标
-        var x, y = this._edit.CalcPosition(this._edit.cursor.line, this._edit.cursor.char, true);
+        var x, y = this._edit.CalcPosition(this._complete.line_start, this._complete.char_start, true);
         y += CODE_LINE_HEIGHT;
         // 清空滚动屏
         if (this._screen == null)
@@ -366,7 +366,7 @@ protected class AUICodeCompleteScreen
 
         // 根据高度，调整候选框位置
         var x, y = this._screen.LocalToGlobal(this._edit);
-        if (y + this._screen.height > this._edit.height || y + this._screen.height < edit_y)
+        if (y + this._screen.height > this._edit.height || this._screen.y + this._screen.height < edit_y)
             this._screen.y = edit_y - this._screen.height;
 
         return true;

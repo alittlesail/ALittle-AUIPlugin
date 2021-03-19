@@ -3,10 +3,12 @@ namespace AUIPlugin;
 
 public class AUICodeCursor : ALittle.Quad
 {
+    // 光标闪烁相关
     private double _flash_alpha = 0;
     private double _flash_dir = 0.05;
     private ALittle.LoopFunction _loop;
 
+    // 编辑控件
     private AUICodeEdit _edit;
 
     // 单光标的位置
@@ -23,8 +25,11 @@ public class AUICodeCursor : ALittle.Quad
         this._edit = edit;
     }
 
+    // 获取当前行
     public get line() : int { return this._it_line; }
+    // 获取当前列
     public get char() : int { return this._it_char; }
+    // 获取虚拟缩进文本
     public get virtual_indent() : string
     {
         if (this._virtual_indent == 0) return "";
@@ -35,7 +40,8 @@ public class AUICodeCursor : ALittle.Quad
         return indent_str;
     }
 
-    public fun Show([Nullable]double x, [Nullable]double y)
+    // 显示光标
+    private fun Show([Nullable]double x, [Nullable]double y)
     {
         if (this._loop == null) this._loop = new ALittle.LoopFunction(bind(this.Update, this), -1, 1, 1);
 		if (!A_LoopSystem.HasUpdater(this._loop)) A_LoopSystem.AddUpdater(this._loop);

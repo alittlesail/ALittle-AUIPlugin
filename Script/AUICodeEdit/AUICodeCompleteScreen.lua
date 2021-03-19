@@ -163,7 +163,7 @@ function AUIPlugin.AUICodeCompleteScreen:ReInit()
 	if self._complete == nil then
 		return false
 	end
-	local x, y = self._edit:CalcPosition(self._edit.cursor.line, self._edit.cursor.char, true)
+	local x, y = self._edit:CalcPosition(self._complete.line_start, self._complete.char_start, true)
 	y = y + (AUIPlugin.CODE_LINE_HEIGHT)
 	if self._screen == nil then
 		self._screen = AUIPlugin.g_Control:CreateControl("code_scroll_screen")
@@ -282,7 +282,7 @@ function AUIPlugin.AUICodeCompleteScreen:Fliter(text)
 	end
 	local edit_x, edit_y = self._edit:CalcPosition(self._edit.cursor.line, self._edit.cursor.char, true)
 	local x, y = self._screen:LocalToGlobal(self._edit)
-	if y + self._screen.height > self._edit.height or y + self._screen.height < edit_y then
+	if y + self._screen.height > self._edit.height or self._screen.y + self._screen.height < edit_y then
 		self._screen.y = edit_y - self._screen.height
 	end
 	return true
