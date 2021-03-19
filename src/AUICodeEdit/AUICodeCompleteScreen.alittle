@@ -37,6 +37,7 @@ protected class AUICodeCompleteScreen
 
     // 所有的候选列表信息
     private lua.ABnfQueryComplete _complete;
+    
     // 当前行和列
     private int _line_end;
     private int _char_end;
@@ -368,6 +369,8 @@ protected class AUICodeCompleteScreen
         var x, y = this._screen.LocalToGlobal(this._edit);
         if (y + this._screen.height > this._edit.height || this._screen.y + this._screen.height < edit_y)
             this._screen.y = edit_y - this._screen.height;
+        else
+            this._screen.y = edit_y + CODE_LINE_HEIGHT;
 
         return true;
     }

@@ -41,6 +41,8 @@ public class AUICodeDeleteLeftRevoke : ALittle.RevokeObject
 		this._edit.cursor.DeleteLeft(false);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 	
 	public fun Back()
@@ -53,6 +55,8 @@ public class AUICodeDeleteLeftRevoke : ALittle.RevokeObject
 		this._edit.InsertText(this._content, false);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }
 
@@ -96,6 +100,8 @@ public class AUICodeDeleteRightRevoke : ALittle.RevokeObject
 		this._edit.cursor.DeleteRight(false);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 
 	public fun Back()
@@ -110,6 +116,8 @@ public class AUICodeDeleteRightRevoke : ALittle.RevokeObject
 		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }
 
@@ -152,6 +160,8 @@ public class AUICodeInsertTextRevoke : ALittle.RevokeObject
 		this._edit.InsertText(this._content, false);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 
 	public fun Back()
@@ -165,6 +175,8 @@ public class AUICodeInsertTextRevoke : ALittle.RevokeObject
 		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
         // 派发变更事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }
 
@@ -212,6 +224,8 @@ public class AUICodeDeleteSelectRevoke : ALittle.RevokeObject
 		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
         // 派发事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 
 	public fun Back()
@@ -224,6 +238,8 @@ public class AUICodeDeleteSelectRevoke : ALittle.RevokeObject
 		this._edit.InsertText(this._content, false);
         // 派发通知事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }
 
@@ -272,6 +288,8 @@ public class AUICodeMultiTabInsertRevoke : ALittle.RevokeObject
 		this._edit.MultiTabInsert(false);
         // 派发通知事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 
 	public fun Back()
@@ -283,6 +301,8 @@ public class AUICodeMultiTabInsertRevoke : ALittle.RevokeObject
 		this._edit.MultiTabDelete(false);
         // 派发事件通知
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }
 
@@ -331,6 +351,8 @@ public class AUICodeMultiTabDeleteRevoke : ALittle.RevokeObject
 		this._edit.MultiTabDelete(false);
         // 派发事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 
 	public fun Back()
@@ -342,5 +364,7 @@ public class AUICodeMultiTabDeleteRevoke : ALittle.RevokeObject
 		this._edit.MultiTabInsert(false);
         // 派发事件
 		if (this._dispatch_event) this._edit.DispatchEvent(new ALittle.UIChangedEvent());
+        // 尝试显示在中间
+        this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	}
 }

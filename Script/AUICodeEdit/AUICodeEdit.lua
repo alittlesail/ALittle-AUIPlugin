@@ -1271,9 +1271,15 @@ function AUIPlugin.AUICodeEdit:HandleKeyDown(event)
 		event.handled = true
 	elseif event.sym == 13 or event.sym == 1073741912 then
 		if self._editable then
+			local jump_insert = false
 			if self._complete_screen:IsShow() then
 				is_change = self._complete_screen:DoSelect()
-			else
+				if not is_change then
+					self._complete_screen:Hide()
+				end
+				jump_insert = is_change
+			end
+			if not jump_insert then
 				local old_line = self._cursor.line
 				local old_char = self._cursor.char
 				local revoke_bind = ALittle.RevokeBind()

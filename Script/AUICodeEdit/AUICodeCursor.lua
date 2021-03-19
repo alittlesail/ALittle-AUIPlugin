@@ -89,12 +89,13 @@ function AUIPlugin.AUICodeCursor:CalcSelectWord()
 		count = count - 1
 	end
 	local cur_char = line.char_list[self._it_char + 1]
-	local is_word = ALittle.String_IsWordChar(cur_char.char)
+	local is_code = ALittle.String_IsCodeChar(cur_char.char)
+	local is_ascii = ALittle.String_IsAsciiChar(cur_char.char)
 	local it_end = self._it_char
 	local i = self._it_char + 1
 	while true do
 		if not(i <= count) then break end
-		if ALittle.String_IsWordChar(line.char_list[i].char) ~= is_word then
+		if ALittle.String_IsCodeChar(line.char_list[i].char) ~= is_code or ALittle.String_IsAsciiChar(line.char_list[i].char) ~= is_ascii then
 			break
 		end
 		it_end = i
@@ -104,7 +105,7 @@ function AUIPlugin.AUICodeCursor:CalcSelectWord()
 	local i = self._it_char
 	while true do
 		if not(i >= 1) then break end
-		if ALittle.String_IsWordChar(line.char_list[i].char) ~= is_word then
+		if ALittle.String_IsCodeChar(line.char_list[i].char) ~= is_code or ALittle.String_IsAsciiChar(line.char_list[i].char) ~= is_ascii then
 			break
 		end
 		it_start = i - 1
@@ -246,10 +247,11 @@ function AUIPlugin.AUICodeCursor:OffsetLeft(ctrl)
 			return
 		end
 		local cur_char = line.char_list[self._it_char]
-		local is_word = ALittle.String_IsWordChar(cur_char.char)
+		local is_code = ALittle.String_IsCodeChar(cur_char.char)
+		local is_ascii = ALittle.String_IsAsciiChar(cur_char.char)
 		local it_char = self._it_char - 1
 		while it_char > 0 do
-			if ALittle.String_IsWordChar(line.char_list[it_char].char) ~= is_word then
+			if ALittle.String_IsCodeChar(line.char_list[it_char].char) ~= is_code or ALittle.String_IsAsciiChar(line.char_list[it_char].char) ~= is_ascii then
 				self:SetLineChar(self._it_line, it_char)
 				return
 			end
@@ -286,10 +288,11 @@ function AUIPlugin.AUICodeCursor:OffsetRight(ctrl)
 			return
 		end
 		local cur_char = line.char_list[self._it_char + 1]
-		local is_word = ALittle.String_IsWordChar(cur_char.char)
+		local is_code = ALittle.String_IsCodeChar(cur_char.char)
+		local is_ascii = ALittle.String_IsAsciiChar(cur_char.char)
 		local it_char = self._it_char + 1
 		while it_char <= count do
-			if ALittle.String_IsWordChar(line.char_list[it_char + 1].char) ~= is_word then
+			if ALittle.String_IsCodeChar(line.char_list[it_char].char) ~= is_code or ALittle.String_IsAsciiChar(line.char_list[it_char].char) ~= is_ascii then
 				self:SetLineChar(self._it_line, it_char)
 				return
 			end

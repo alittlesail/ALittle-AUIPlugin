@@ -41,7 +41,7 @@ public class AUICodeCursor : ALittle.Quad
     }
 
     // 显示光标
-    private fun Show([Nullable]double x, [Nullable]double y)
+    public fun Show([Nullable]double x, [Nullable]double y)
     {
         if (this._loop == null) this._loop = new ALittle.LoopFunction(bind(this.Update, this), -1, 1, 1);
 		if (!A_LoopSystem.HasUpdater(this._loop)) A_LoopSystem.AddUpdater(this._loop);
@@ -80,12 +80,14 @@ public class AUICodeCursor : ALittle.Quad
         while (count > 0 && line.char_list[count].width <= 0)
             -- count;
         var cur_char = line.char_list[this._it_char + 1];
-        var is_word = ALittle.String_IsWordChar(cur_char.char);
+        var is_code = ALittle.String_IsCodeChar(cur_char.char);
+        var is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
         // 从当前光标向后找
         var it_end = this._it_char;
         for (var i = this._it_char + 1; i <= count; 1)
         {
-            if (ALittle.String_IsWordChar(line.char_list[i].char) != is_word)
+            if (ALittle.String_IsCodeChar(line.char_list[i].char) != is_code
+            || ALittle.String_IsAsciiChar(line.char_list[i].char) != is_ascii)
                 break;
             it_end = i;
         }
@@ -93,7 +95,8 @@ public class AUICodeCursor : ALittle.Quad
         var it_start = this._it_char;
         for (var i = this._it_char; i >= 1; -1)
         {
-            if (ALittle.String_IsWordChar(line.char_list[i].char) != is_word)
+            if (ALittle.String_IsCodeChar(line.char_list[i].char) != is_code
+            || ALittle.String_IsAsciiChar(line.char_list[i].char) != is_ascii)
                 break;
             it_start = i - 1;
         }
@@ -243,12 +246,14 @@ public class AUICodeCursor : ALittle.Quad
             var line = this._edit.line_list[this._it_line];
             if (line == null) return;
             var cur_char = line.char_list[this._it_char];
-            var is_word = ALittle.String_IsWordChar(cur_char.char);
+            var is_code = ALittle.String_IsCodeChar(cur_char.char);
+            var is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
             
             var it_char = this._it_char - 1;
             while (it_char > 0)
             {
-                if (ALittle.String_IsWordChar(line.char_list[it_char].char) != is_word)
+                if (ALittle.String_IsCodeChar(line.char_list[it_char].char) != is_code
+                || ALittle.String_IsAsciiChar(line.char_list[it_char].char) != is_ascii)
                 {
                     this.SetLineChar(this._it_line, it_char);
                     return;   
@@ -292,12 +297,14 @@ public class AUICodeCursor : ALittle.Quad
 
             // 检查当前字符是【字母，数字，下划线】或者【其他】
             var cur_char = line.char_list[this._it_char + 1];
-            var is_word = ALittle.String_IsWordChar(cur_char.char);
+            var is_code = ALittle.String_IsCodeChar(cur_char.char);
+            var is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
 
             var it_char = this._it_char + 1;
             while (it_char <= count)
             {
-                if (ALittle.String_IsWordChar(line.char_list[it_char + 1].char) != is_word)
+                if (ALittle.String_IsCodeChar(line.char_list[it_char].char) != is_code
+                || ALittle.String_IsAsciiChar(line.char_list[it_char].char) != is_ascii)
                 {
                     this.SetLineChar(this._it_line, it_char);
                     return;   

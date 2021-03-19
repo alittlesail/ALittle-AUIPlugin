@@ -42,6 +42,7 @@ function AUIPlugin.AUICodeDeleteLeftRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeDeleteLeftRevoke:Back()
@@ -51,6 +52,7 @@ function AUIPlugin.AUICodeDeleteLeftRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 assert(ALittle.RevokeObject, " extends class:ALittle.RevokeObject is nil")
@@ -73,6 +75,7 @@ function AUIPlugin.AUICodeDeleteRightRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeDeleteRightRevoke:Back()
@@ -83,6 +86,7 @@ function AUIPlugin.AUICodeDeleteRightRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 assert(ALittle.RevokeObject, " extends class:ALittle.RevokeObject is nil")
@@ -105,6 +109,7 @@ function AUIPlugin.AUICodeInsertTextRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeInsertTextRevoke:Back()
@@ -115,6 +120,7 @@ function AUIPlugin.AUICodeInsertTextRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 assert(ALittle.RevokeObject, " extends class:ALittle.RevokeObject is nil")
@@ -140,6 +146,7 @@ function AUIPlugin.AUICodeDeleteSelectRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeDeleteSelectRevoke:Back()
@@ -149,6 +156,7 @@ function AUIPlugin.AUICodeDeleteSelectRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 assert(ALittle.RevokeObject, " extends class:ALittle.RevokeObject is nil")
@@ -174,6 +182,7 @@ function AUIPlugin.AUICodeMultiTabInsertRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeMultiTabInsertRevoke:Back()
@@ -183,6 +192,7 @@ function AUIPlugin.AUICodeMultiTabInsertRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 assert(ALittle.RevokeObject, " extends class:ALittle.RevokeObject is nil")
@@ -208,6 +218,7 @@ function AUIPlugin.AUICodeMultiTabDeleteRevoke:Forward()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 function AUIPlugin.AUICodeMultiTabDeleteRevoke:Back()
@@ -217,6 +228,7 @@ function AUIPlugin.AUICodeMultiTabDeleteRevoke:Back()
 	if self._dispatch_event then
 		self._edit:DispatchEvent(___all_struct[958494922], {})
 	end
+	self._edit:FocusLineCharToCenter(self._edit.cursor.line, self._edit.cursor.char)
 end
 
 end

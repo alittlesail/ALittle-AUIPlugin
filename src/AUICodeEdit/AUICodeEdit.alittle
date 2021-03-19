@@ -1285,11 +1285,14 @@ public class AUICodeEdit : ALittle.DisplayLayout
         {
             if (this._editable)
             {
+                var jump_insert = false;
                 if (this._complete_screen.IsShow())
                 {
                     is_change = this._complete_screen.DoSelect();
+                    if (!is_change) this._complete_screen.Hide();
+                    jump_insert = is_change;
                 }
-                else
+                if (!jump_insert)
                 {
                     var old_line = this._cursor.line;
                     var old_char = this._cursor.char;
