@@ -1,35 +1,48 @@
 
 namespace AUIPlugin;
 
+// 一条候选信息
 protected struct AUICodeCompleteItemInfo
 {
-    ALittle.TextRadioButton _item_button;
-    ALittle.Text _item_title;
-    ALittle.Image _tag_image;
+    // 整个候选容器
     ALittle.DisplayObject _item;
+    // 候选按钮
+    ALittle.TextRadioButton _item_button;
+    // 候选文本
+    ALittle.Text _item_title;
+    // 候选图标
+    ALittle.Image _tag_image;
 
-    List<int> pos;        // 用于排序
+    // 搜索命中的下标，用于候选列表排序
+    List<int> pos;
+    // 候选内容转为大写
     string upper;
+    // 候选详细信息
     lua.ABnfQueryCompleteInfo complete;
 }
 
+// 候选滚动屏
 protected class AUICodeCompleteScreen
 {
+    // 滚动屏幕
     private ALittle.ScrollScreen _screen;
+    // 当前所有候选信息列表
     private List<AUICodeCompleteItemInfo> _item_list;
-
+    // 构造对象池
     private List<AUICodeCompleteItemInfo> _item_pool = new List<AUICodeCompleteItemInfo>();
     private int _item_pool_count = 0;
-
+    // 对应候选内容的提示
     private ALittle.DisplayObject _tip_dialog;
     private ALittle.TextArea _tip_text;
-    
-    private ALittle.TextRadioButtonGroup _item_group;
 
+    // 所有的候选列表信息
     private lua.ABnfQueryComplete _complete;
+    // 当前行和列
     private int _line_end;
     private int _char_end;
-    private AUICodeEdit _edit; // 测试
+    private AUICodeEdit _edit; // 编辑控件
+    
+    // 每个候选项的高度，这个由编辑器编辑的控件高度觉得
     private double _item_height = 0;
 
     public ctor(AUICodeEdit edit)
@@ -37,19 +50,25 @@ protected class AUICodeCompleteScreen
         this._edit = edit;
     }
 
+    // 显示候选列表
     public async fun ShowComplete()
     {
+        // 如果当前没有候选列表，那么要进行初始化
         if (this._complete == null)
         {
+            // 初始化候选列表
             if (!this.ReInit())
             {
+                // 失败了，直接隐藏然后返回
                 this.Hide();
                 return;
             }
         }
 
+        // 保存当前的光标行和列
         this._line_end = this._edit.cursor.line;
         this._char_end = this._edit.cursor.char;
+        // 抓取识别的文本内容，如果没有或者为空串，直接返回
         var text = this._edit.GetTargetText(this._complete.line_start, this._complete.char_start - 1, this._edit.cursor.line, this._edit.cursor.char);
         if (text == null || text == "")
         {
@@ -57,43 +76,55 @@ protected class AUICodeCompleteScreen
             return;
         }
 
+        // 根据text的内容，对候选列表信息进行过滤
         if (!this.Fliter(text))
         {
+            // 过滤失败那么就重新抓取信息
             this.Hide();
             if (!this.ReInit()) return;
 
+            // 保存当前的光标行和列
             this._line_end = this._edit.cursor.line;
             this._char_end = this._edit.cursor.char;
+            // 抓取识别的文本内容，如果没有或者为空串，直接返回
             text = this._edit.GetTargetText(this._complete.line_start, this._complete.char_start - 1, this._edit.cursor.line, this._edit.cursor.char);
             if (text == null || text == "") return;
-
+            // 根据text的内容，对候选列表信息进行过滤
             if (!this.Fliter(text)) this.Hide();
         }
     }
 
+    // 是否处于显示状态
     public fun IsShow() : bool { return this._complete != null; }
 
+    // 向上选择
     public fun SelectUp()
     {
-        var target = this.GetSelectIndex();
-        target -= 1;
-        if (target < 1) return;
-        var item = this._screen.childs[target];
+        // 获取当前选择的下标
+        var target_index = this.GetSelectIndex();
+        if (target_index == null) target_index = 1;
+        else target_index -= 1;
+        // 如果已经是第一个了，那么就直接返回
+        if (target_index < 1) return;
+        // 获取对应项
+        var item = this._screen.childs[target_index];
+        // 获取项信息
         var info = cast<AUICodeCompleteItemInfo>(item._user_data);
+        // 把单选按钮设置为选中
         info._item_button.selected = true;
-        
+        // 如果有描述信息，那么就显示tip，否则就关闭
         if (info.complete.descriptor != null)
             this.ShowTip(info.complete.descriptor);
         else
             this.HideTip();
-
+        // 调整滚动条位置
         var delta = this._screen.container.height - this._screen.height;
         if (delta > 0)
         {
-            var offset = (target - 1) * this._item_height + this._screen.container_y;
+            var offset = (target_index - 1) * this._item_height + this._screen.container_y;
             if (offset < 0)
             {
-                this._screen.right_scrollbar.offset_rate = ((target - 1) * this._item_height) / delta; 
+                this._screen.right_scrollbar.offset_rate = ((target_index - 1) * this._item_height) / delta; 
                 this._screen.AdjustScrollBar();
             }
         }
@@ -101,25 +132,31 @@ protected class AUICodeCompleteScreen
 
     public fun SelectDown()
     {
-        var target = this.GetSelectIndex();
-        target += 1;
-        if (target > this._screen.child_count) return;
-        var item = this._screen.childs[target];
+        // 获取当前选择的下标
+        var target_index = this.GetSelectIndex();
+        if (target_index == null) target_index = 1;
+        else target_index += 1;
+        // 如果已经是最后一个了，那么就直接返回
+        if (target_index > this._screen.child_count) return;
+        // 获取对应项
+        var item = this._screen.childs[target_index];
+        // 获取项信息
         var info = cast<AUICodeCompleteItemInfo>(item._user_data);
+        // 把单选按钮设置为选中
         info._item_button.selected = true;
-
+        // 如果有描述信息，那么就显示tip，否则就关闭
         if (info.complete.descriptor != null)
             this.ShowTip(info.complete.descriptor);
         else
             this.HideTip();
-        
+        // 调整滚动条
         var delta = this._screen.container.height - this._screen.height;
         if (delta > 0)
         {
-            var offset = target * this._item_height + this._screen.container_y;
+            var offset = target_index * this._item_height + this._screen.container_y;
             if (offset > this._screen.height)
             {
-                this._screen.right_scrollbar.offset_rate = (target * this._item_height - this._screen.height) / delta;   
+                this._screen.right_scrollbar.offset_rate = (target_index * this._item_height - this._screen.height) / delta;   
                 this._screen.AdjustScrollBar();   
             }
         }
@@ -127,23 +164,30 @@ protected class AUICodeCompleteScreen
 
     public fun DoSelect() : bool
     {
-        var target = this.GetSelectIndex();
-        if (target == null) return false;
-
+        // 获取当前选择的下标
+        var target_index = this.GetSelectIndex();
+        if (target_index == null) return false;
+        // 获取选中项
+        var item = this._screen.childs[target_index];
+        // 获取项信息
+        var complete = cast<AUICodeCompleteItemInfo>(item._user_data).complete;
+        // 如果有insert字段，那么就选insert字段，如果没有就选display字段
+        var text = complete.insert;
+        if (text == null) text = complete.display;
+        // 如果文本没有，那么就直接返回
+        if (text == null) return false;
+        // 设置区域光标
         this._edit.select_cursor.StartLineChar(this._complete.line_start, this._complete.char_start - 1);
         this._edit.select_cursor.UpdateLineChar(this._edit.cursor.line, this._edit.cursor.char);
-
-        var item = this._screen.childs[target];
-        var text:string;
-        var complete = cast<AUICodeCompleteItemInfo>(item._user_data).complete;
-        if (complete.insert != null) text = complete.insert;
-        else text = complete.display;
-
+        // 插入
         var result = this._edit.InsertText(text, true);
+        // 隐藏
         this.Hide();
+        // 返回结果
         return result;
     }
 
+    // 获取当前选中的下标
     private fun GetSelectIndex() : int
     {
         var target:int = null;
@@ -158,25 +202,29 @@ protected class AUICodeCompleteScreen
         return target;
     }
 
+    // 初始化候选列表
     private await fun ReInit() : bool
     {
+        // 如果没有语言插件，那么就直接返回
         if (this._edit.language == null) return false;
+        // 查询候选信息
         this._complete = this._edit.language.QueryComplete(this._edit.cursor.line, this._edit.cursor.char - 1);
+        // 如果查询不到，那么就直接返回
         if (this._complete == null) return false;
         // 计算坐标
-        var x, y = this._edit.CalcPosition(this._complete.line_start, this._complete.char_start, true);
+        var x, y = this._edit.CalcPosition(this._edit.cursor.line, this._edit.cursor.char, true);
         y += CODE_LINE_HEIGHT;
-
+        // 清空滚动屏
         if (this._screen == null)
         {
             this._screen = g_Control.CreateControl{ALittle.ScrollScreen}("code_scroll_screen");
             this._screen.width = 200;
         }
         this._screen.RemoveAllChild();
-
+        // 设置滚动屏位置
         this._screen.x = x;
         this._screen.y = y;
-
+        // 把当前所有的候选项全部纳入到池
         if (this._item_list != null)
         {
             for (var index, info in this._item_list)
@@ -185,13 +233,17 @@ protected class AUICodeCompleteScreen
                 this._item_pool[this._item_pool_count] = info;
             }
         }
-
+        // 设置最大宽度
         var max_width = 200.0;
 
-        this._item_group = new ALittle.TextRadioButtonGroup();
+        // 构建最新的候选组
+        var item_group = new ALittle.TextRadioButtonGroup();
+        // 构建最新的候选列表
         this._item_list = new List<AUICodeCompleteItemInfo>();
+        // 遍历候选列表
         for (var index, info in this._complete.complete_list)
         {
+            // 构建候选项
             var item_info:AUICodeCompleteItemInfo;
             if (this._item_pool_count > 0)
             {
@@ -204,29 +256,37 @@ protected class AUICodeCompleteScreen
                 item_info = new AUICodeCompleteItemInfo();   
                 item_info._item = g_Control.CreateControl{ALittle.DisplayObject}("code_complete_item", item_info);
             }
-            item_info._item_button.group = this._item_group;
+            // 设置候选项的组
+            item_info._item_button.group = item_group;
+            item_info._item_button.selected = false;
+            // 设置候选项标题
             item_info._item_title.text = info.display;
-            if (info.insert == null)
-                item_info.upper = ALittle.String_Upper(info.display);
-            else
-                item_info.upper = ALittle.String_Upper(info.insert);
+            var text:string = info.insert;
+            if (text == null) text = info.display;
+            if (text != null) item_info.upper = ALittle.String_Upper(text);
+            else item_info.upper = null;
+            // 设置图标
             item_info._tag_image.texture_name = this._edit.language.QueryCompleteIcon(info.tag);
+            // 关联项信息
             item_info._item._user_data = item_info;
+            // 保存信息
             item_info.complete = info;
+            // 添加到列表
             this._item_list[index] = item_info;
-
+            // 计算当前宽度
             var title_wdith = item_info._item_title.width + item_info._item_title.x + 5;
             if (max_width < title_wdith) max_width = title_wdith;
-
+            // 保存每项高度
             this._item_height = item_info._item.height;
         }
-
+        // 设置滚动屏宽度
         this._screen.width = max_width + this._screen.right_scrollbar.width;
-
+        // 添加到容器
         this._edit.help_container.AddChild(this._screen);
         return true;
     }
 
+    // 排序
     private static ItemInfoSort(AUICodeCompleteItemInfo a, AUICodeCompleteItemInfo b) : bool
     {
         for (var index, pos in a.pos)
@@ -237,6 +297,7 @@ protected class AUICodeCompleteScreen
         return false;
     }
 
+    // 根据文本过滤
     private fun Fliter(string text) : bool
     {
         // 将内容改为大写
@@ -253,9 +314,12 @@ protected class AUICodeCompleteScreen
         var upper_list_count = ALittle.List_Len(upper_list);
         if (upper_list_count > 1 && upper_list[upper_list_count] == "") upper_list[upper_list_count] = null;
 
+        // 列表
         var sort_list = new List<AUICodeCompleteItemInfo>();
         var count = 0;
+        // 移除所有项
         this._screen.RemoveAllChild();
+        // 把符合条件的全部添加到sort_list
         for (var index, info in this._item_list)
         {
             // 初始化数据
@@ -283,59 +347,62 @@ protected class AUICodeCompleteScreen
 
         // 排序
         ALittle.List_Sort(sort_list, AUICodeCompleteScreen.ItemInfoSort);
-        count = 0;
 
-        var descriptor:string;
+        // 添加前面50个
         for (var index, info in sort_list)
         {
-            if (this._screen.child_count == 0)
-            {
-                info._item_button.selected = true;
-                descriptor = info.complete.descriptor;
-            }
             this._screen.AddChild(info._item); 
-            if (count >= 50) break;
+            if (index >= 50) break;
         }
-
         if (this._screen.child_count == 0) return false;
         
+        // 计算高度
         var height = this._screen.child_count * this._item_height;
         if (height < 200) this._screen.height = height;
         else this._screen.height = 200;
 
-        if (descriptor != null)
-            this.ShowTip(descriptor);
-        else
-            this.HideTip();
+        // 计算坐标正在编辑的目标的位置
+        var edit_x, edit_y = this._edit.CalcPosition(this._edit.cursor.line, this._edit.cursor.char, true);
+
+        // 根据高度，调整候选框位置
+        var x, y = this._screen.LocalToGlobal(this._edit);
+        if (y + this._screen.height > this._edit.height || y + this._screen.height < edit_y)
+            this._screen.y = edit_y - this._screen.height;
 
         return true;
     }
 
     public fun Hide()
     {
+        // 隐藏tip提示
         this.HideTip();
+        // 把候选内容置为null
         this._complete = null;
+        // 清空滚动屏所有项
         if (this._screen != null) this._screen.RemoveAllChild();
+        // 从空间树上移除
         this._edit.help_container.RemoveChild(this._screen);
     }
 
+    // 如果当前的光标在候选目标文本之外，那么隐藏
     public fun TryHide()
     {
+        // 如果没有候选信息，那么直接返回
         if (this._complete == null) return;
 
-        // 检查光标
+        // 检查行
         if (this._edit.cursor.line < this._complete.line_start || this._edit.cursor.line > this._line_end)
         {
             this.Hide();
             return;
         }
-
+        // 检查开始行
         if (this._edit.cursor.line == this._complete.line_start && this._edit.cursor.char < this._complete.char_start)
         {
             this.Hide();
             return;
         }
-
+        // 检查结束行
         if (this._edit.cursor.line == this._line_end && this._edit.cursor.char > this._char_end)
         {
             this.Hide();
@@ -353,11 +420,15 @@ protected class AUICodeCompleteScreen
             this._tip_dialog.width = 200;
 		}
 
+        // 将对话框添加到容器
         this._edit.help_container.AddChild(this._tip_dialog);
+        // 显示
 		this._tip_dialog.visible = true;
+        // 设置文本内容
 		this._tip_text.text = content;
+        // 设置高度
 		this._tip_dialog.height = this._tip_text.real_height + 16;
-
+        // 调整位置
 		this._tip_dialog.x = this._screen.x + this._screen.width;
 		this._tip_dialog.y = this._screen.y;
         if (this._tip_dialog.x + this._tip_dialog.width > A_UISystem.view_width)

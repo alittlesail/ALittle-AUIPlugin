@@ -10,8 +10,8 @@ local ___ipairs = ipairs
 
 ALittle.RegStruct(1773085126, "AUIPlugin.AUICodeCompleteItemInfo", {
 name = "AUIPlugin.AUICodeCompleteItemInfo", ns_name = "AUIPlugin", rl_name = "AUICodeCompleteItemInfo", hash_code = 1773085126,
-name_list = {"_item_button","_item_title","_tag_image","_item","pos","upper","complete"},
-type_list = {"ALittle.TextRadioButton","ALittle.Text","ALittle.Image","ALittle.DisplayObject","List<int>","string","lua.ABnfQueryCompleteInfo"},
+name_list = {"_item","_item_button","_item_title","_tag_image","pos","upper","complete"},
+type_list = {"ALittle.DisplayObject","ALittle.TextRadioButton","ALittle.Text","ALittle.Image","List<int>","string","lua.ABnfQueryCompleteInfo"},
 option_map = {}
 })
 ALittle.RegStruct(-1149003083, "lua.ABnfQueryCompleteInfo", {
@@ -67,12 +67,16 @@ function AUIPlugin.AUICodeCompleteScreen:IsShow()
 end
 
 function AUIPlugin.AUICodeCompleteScreen:SelectUp()
-	local target = self:GetSelectIndex()
-	target = target - (1)
-	if target < 1 then
+	local target_index = self:GetSelectIndex()
+	if target_index == nil then
+		target_index = 1
+	else
+		target_index = target_index - (1)
+	end
+	if target_index < 1 then
 		return
 	end
-	local item = self._screen.childs[target]
+	local item = self._screen.childs[target_index]
 	local info = item._user_data
 	info._item_button.selected = true
 	if info.complete.descriptor ~= nil then
@@ -82,21 +86,25 @@ function AUIPlugin.AUICodeCompleteScreen:SelectUp()
 	end
 	local delta = self._screen.container.height - self._screen.height
 	if delta > 0 then
-		local offset = (target - 1) * self._item_height + self._screen.container_y
+		local offset = (target_index - 1) * self._item_height + self._screen.container_y
 		if offset < 0 then
-			self._screen.right_scrollbar.offset_rate = ((target - 1) * self._item_height) / delta
+			self._screen.right_scrollbar.offset_rate = ((target_index - 1) * self._item_height) / delta
 			self._screen:AdjustScrollBar()
 		end
 	end
 end
 
 function AUIPlugin.AUICodeCompleteScreen:SelectDown()
-	local target = self:GetSelectIndex()
-	target = target + (1)
-	if target > self._screen.child_count then
+	local target_index = self:GetSelectIndex()
+	if target_index == nil then
+		target_index = 1
+	else
+		target_index = target_index + (1)
+	end
+	if target_index > self._screen.child_count then
 		return
 	end
-	local item = self._screen.childs[target]
+	local item = self._screen.childs[target_index]
 	local info = item._user_data
 	info._item_button.selected = true
 	if info.complete.descriptor ~= nil then
@@ -106,29 +114,30 @@ function AUIPlugin.AUICodeCompleteScreen:SelectDown()
 	end
 	local delta = self._screen.container.height - self._screen.height
 	if delta > 0 then
-		local offset = target * self._item_height + self._screen.container_y
+		local offset = target_index * self._item_height + self._screen.container_y
 		if offset > self._screen.height then
-			self._screen.right_scrollbar.offset_rate = (target * self._item_height - self._screen.height) / delta
+			self._screen.right_scrollbar.offset_rate = (target_index * self._item_height - self._screen.height) / delta
 			self._screen:AdjustScrollBar()
 		end
 	end
 end
 
 function AUIPlugin.AUICodeCompleteScreen:DoSelect()
-	local target = self:GetSelectIndex()
-	if target == nil then
+	local target_index = self:GetSelectIndex()
+	if target_index == nil then
+		return false
+	end
+	local item = self._screen.childs[target_index]
+	local complete = item._user_data.complete
+	local text = complete.insert
+	if text == nil then
+		text = complete.display
+	end
+	if text == nil then
 		return false
 	end
 	self._edit.select_cursor:StartLineChar(self._complete.line_start, self._complete.char_start - 1)
 	self._edit.select_cursor:UpdateLineChar(self._edit.cursor.line, self._edit.cursor.char)
-	local item = self._screen.childs[target]
-	local text
-	local complete = item._user_data.complete
-	if complete.insert ~= nil then
-		text = complete.insert
-	else
-		text = complete.display
-	end
 	local result = self._edit:InsertText(text, true)
 	self:Hide()
 	return result
@@ -154,7 +163,7 @@ function AUIPlugin.AUICodeCompleteScreen:ReInit()
 	if self._complete == nil then
 		return false
 	end
-	local x, y = self._edit:CalcPosition(self._complete.line_start, self._complete.char_start, true)
+	local x, y = self._edit:CalcPosition(self._edit.cursor.line, self._edit.cursor.char, true)
 	y = y + (AUIPlugin.CODE_LINE_HEIGHT)
 	if self._screen == nil then
 		self._screen = AUIPlugin.g_Control:CreateControl("code_scroll_screen")
@@ -170,7 +179,7 @@ function AUIPlugin.AUICodeCompleteScreen:ReInit()
 		end
 	end
 	local max_width = 200.0
-	self._item_group = {}
+	local item_group = {}
 	self._item_list = {}
 	for index, info in ___ipairs(self._complete.complete_list) do
 		local item_info
@@ -182,12 +191,17 @@ function AUIPlugin.AUICodeCompleteScreen:ReInit()
 			item_info = {}
 			item_info._item = AUIPlugin.g_Control:CreateControl("code_complete_item", item_info)
 		end
-		item_info._item_button.group = self._item_group
+		item_info._item_button.group = item_group
+		item_info._item_button.selected = false
 		item_info._item_title.text = info.display
-		if info.insert == nil then
-			item_info.upper = ALittle.String_Upper(info.display)
+		local text = info.insert
+		if text == nil then
+			text = info.display
+		end
+		if text ~= nil then
+			item_info.upper = ALittle.String_Upper(text)
 		else
-			item_info.upper = ALittle.String_Upper(info.insert)
+			item_info.upper = nil
 		end
 		item_info._tag_image.texture_name = self._edit.language:QueryCompleteIcon(info.tag)
 		item_info._item._user_data = item_info
@@ -251,15 +265,9 @@ function AUIPlugin.AUICodeCompleteScreen:Fliter(text)
 		end
 	end
 	ALittle.List_Sort(sort_list, AUIPlugin.AUICodeCompleteScreen.ItemInfoSort)
-	count = 0
-	local descriptor
 	for index, info in ___ipairs(sort_list) do
-		if self._screen.child_count == 0 then
-			info._item_button.selected = true
-			descriptor = info.complete.descriptor
-		end
 		self._screen:AddChild(info._item)
-		if count >= 50 then
+		if index >= 50 then
 			break
 		end
 	end
@@ -272,10 +280,10 @@ function AUIPlugin.AUICodeCompleteScreen:Fliter(text)
 	else
 		self._screen.height = 200
 	end
-	if descriptor ~= nil then
-		self:ShowTip(descriptor)
-	else
-		self:HideTip()
+	local edit_x, edit_y = self._edit:CalcPosition(self._edit.cursor.line, self._edit.cursor.char, true)
+	local x, y = self._screen:LocalToGlobal(self._edit)
+	if y + self._screen.height > self._edit.height or y + self._screen.height < edit_y then
+		self._screen.y = edit_y - self._screen.height
 	end
 	return true
 end
