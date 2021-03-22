@@ -34,6 +34,8 @@ public class protobuf
 
     public static createimporter(string path) : protobuf_importer {}
     public static importer_import(protobuf_importer importer, string path) : protobuf_file_descriptor {}
+    public static importer_error_count(protobuf_importer importer) : int {}
+    public static importer_error_info(protobuf_importer importer, int index) : string {}
 
     public static filedescriptor_messagetypecount(protobuf_file_descriptor descriptor) : int {}
     public static filedescriptor_messagetype(protobuf_file_descriptor descriptor, int index) : protobuf_descriptor {}

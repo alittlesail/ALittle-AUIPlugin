@@ -72,8 +72,18 @@ public class LuaProtobufSchedule : ALittle.ISchedule
         {
             if (ALittle.File_GetFileExtByPathAndUpper(file_path) == "PROTO")
             {
-                var file_descriptor = lua.protobuf.importer_import(this._importer, ALittle.String_Sub(file_path, ALittle.String_Len(root_path) + 2));
-                if (file_descriptor == null) return "文件加载失败:"..file_path;
+                var rel_path = ALittle.String_Sub(file_path, ALittle.String_Len(root_path) + 2);
+                var file_descriptor = lua.protobuf.importer_import(this._importer, rel_path);
+                if (file_descriptor == null)
+                {
+                    // 遇到错误就跳过，至少要先可以用
+                    // var error_count = lua.protobuf.importer_error_count(this._importer);
+                    // var error_list = new List<string>();
+                    // for (var error_index = 0; error_index < error_count; 1)
+                    //     ALittle.List_Push(error_list, lua.protobuf.importer_error_info(this._importer, error_index));
+                    // return "文件加载失败:"..file_path.." error:"..ALittle.String_Join(error_list, "\n");
+                    continue;
+                }
 
                 var message_count = lua.protobuf.filedescriptor_messagetypecount(file_descriptor);
                 for (var i = 0; i < message_count; 1)

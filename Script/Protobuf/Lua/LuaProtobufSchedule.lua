@@ -71,9 +71,10 @@ function Lua.LuaProtobufSchedule:LoadProto(root_path)
 	local file_map = ALittle.File_GetFileAttrByDir(root_path)
 	for file_path, _ in ___pairs(file_map) do
 		if ALittle.File_GetFileExtByPathAndUpper(file_path) == "PROTO" then
-			local file_descriptor = protobuf.importer_import(self._importer, ALittle.String_Sub(file_path, ALittle.String_Len(root_path) + 2))
+			local rel_path = ALittle.String_Sub(file_path, ALittle.String_Len(root_path) + 2)
+			local file_descriptor = protobuf.importer_import(self._importer, rel_path)
 			if file_descriptor == nil then
-				return "文件加载失败:" .. file_path
+				goto continue_1
 			end
 			local message_count = protobuf.filedescriptor_messagetypecount(file_descriptor)
 			local i = 0
@@ -106,6 +107,7 @@ function Lua.LuaProtobufSchedule:LoadProto(root_path)
 				i = i+(1)
 			end
 		end
+		::continue_1::
 	end
 	return nil
 end
