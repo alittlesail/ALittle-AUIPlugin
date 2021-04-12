@@ -48,7 +48,7 @@ public class LuaProtobufSchedule : ALittle.ISchedule
     private Map<string, lua_socket_schedule_enum_info> _enum_map;
     private Map<string, lua_socket_schedule_enum_info> _upper_enum_map;
     private int _last_time;
-    
+
     public ctor()
     {
         this._message_map = new Map<string, lua_socket_schedule_message_info>();
