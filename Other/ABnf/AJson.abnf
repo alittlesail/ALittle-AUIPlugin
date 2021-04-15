@@ -1,4 +1,3 @@
-
 // 语法树的跟【Root是系统内置，必须定义Root作为语法根节点，没有定义会报错】
 Root = Value?;
 
@@ -10,13 +9,17 @@ Number : "[0-9]" [103,150,163]  = "0x[0-9a-fA-F]+" | "[0-9]+(%.[0-9]+)?";
 Null [53,155,185] = <null>;
 // bool
 Bool [204,120,50] = <true> | <false>;
-
+// Json值
 Value = Text | Bool | Number | Null | Array | Object;
-
+// 数组
 Array = '['@ (Value ArrayValuePair*)? ']';
+// Array元素
 ArrayValuePair = ','@ Value;
-
+// 映射表
 Object = '{'@ (ObjectValue ObjectValuePair*)? '}';
+// 键
 ObjectKey [152,118,170] = Text;
+// 键值对
 ObjectValue = ObjectKey ':'@ Value;
+// Object元素
 ObjectValuePair = ','@ ObjectValue;
