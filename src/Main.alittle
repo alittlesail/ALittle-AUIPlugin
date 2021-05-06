@@ -60,12 +60,13 @@ public await static __Plugin_Setup(ALittle.ControlSystem control, string module_
         lua.require("socket");
     }
 
+    var require = new ALittle.Require();
     [Language(Lua)]
-    alittle.Require(script_base_path, "Protobuf/Lua/ISocket");
-    [Language(Lua)]
-    alittle.Require(script_base_path, "Protobuf/Lua/LuaProtobufSchedule");
-    alittle.RequireFromPaths(script_base_path, "AUI/", paths("src/AUI"));
-    alittle.RequireFromPaths(script_base_path, "AUICodeEdit/", paths("src/AUICodeEdit"));
+    require.AddPaths(script_base_path, "Protobuf/", paths("src/Protobuf"));
+    require.AddPaths(script_base_path, "AUI/", paths("src/AUI"));
+    require.AddPaths(script_base_path, "AUICodeEdit/", paths("src/AUICodeEdit"));
+    require.Start();
+
     g_AUIIMEManager.Setup();
 }
 

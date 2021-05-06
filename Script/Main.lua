@@ -46,19 +46,40 @@ function AUIPlugin.__Plugin_Setup(control, module_base_path, script_base_path)
 		require("protobuf")
 		require("socket")
 	end
-	Require(script_base_path, "Protobuf/Lua/ISocket")
-	Require(script_base_path, "Protobuf/Lua/LuaProtobufSchedule")
-	RequireFromPaths(script_base_path, "AUI/", {"AUIWebLoginManager.alittle", "AUIVersionManager.alittle", "AUITool.alittle"
-		, "AUIStatLayout.alittle", "AUIRightMenu.alittle", "AUIImageCutPlugin.alittle"
-		, "AUIIMEManager.alittle", "AUIGridCutImageDialog.alittle", "AUIFileTreeLayout.alittle"
-		, "AUIFileSelectLayout.alittle", "AUIFileSelectDialog.alittle", "AUIFileRemoteSelectLayout.alittle"
-		, "AUIEditImageDialog.alittle", "AUIDrawingBoard.alittle"})
-	RequireFromPaths(script_base_path, "AUICodeEdit/", {"AUICodeSelectCursor.alittle", "AUICodeRevocation.alittle", "AUICodeProject.alittle"
-		, "AUICodeParamList.alittle", "AUICodeLineNumber.alittle", "AUICodeLineContainer.alittle"
-		, "AUICodeLanguage.alittle", "AUICodeFilterScreen.alittle", "AUICodeEdit.alittle"
-		, "AUICodeDefine.alittle", "AUICodeCursor.alittle", "AUICodeComponent.alittle"
-		, "AUICodeCompleteScreen.alittle", "ABnf/AUICodeCommon.alittle", "ABnf/AUICodeALittleScript.alittle"
-		, "ABnf/AUICodeABnf.alittle"})
+	local require = ALittle.Require()
+	require:AddPaths(script_base_path, "Protobuf/", {{"Lua/ISocket"}
+		,{"Lua/LuaProtobufSchedule"}})
+	require:AddPaths(script_base_path, "AUI/", {{"AUIDrawingBoard"}
+		,{"AUIEditImageDialog"}
+		,{"AUIFileRemoteSelectLayout"}
+		,{"AUIFileSelectDialog"}
+		,{"AUIFileSelectLayout"}
+		,{"AUIFileTreeLayout"}
+		,{"AUIGridCutImageDialog"}
+		,{"AUIIMEManager"}
+		,{"AUIImageCutPlugin"}
+		,{"AUIRightMenu"}
+		,{"AUIStatLayout"}
+		,{"AUITool"}
+		,{"AUIVersionManager"}
+		,{"AUIWebLoginManager"}})
+	require:AddPaths(script_base_path, "AUICodeEdit/", {{"ABnf/AUICodeABnf","AUICodeLanguage","AUICodeProject"}
+		,{"ABnf/AUICodeALittleScript","AUICodeLanguage","AUICodeProject"}
+		,{"ABnf/AUICodeCommon","AUICodeLanguage","AUICodeProject"}
+		,{"AUICodeCompleteScreen"}
+		,{"AUICodeComponent"}
+		,{"AUICodeCursor"}
+		,{"AUICodeDefine"}
+		,{"AUICodeEdit"}
+		,{"AUICodeFilterScreen"}
+		,{"AUICodeLanguage"}
+		,{"AUICodeLineContainer"}
+		,{"AUICodeLineNumber"}
+		,{"AUICodeParamList"}
+		,{"AUICodeProject"}
+		,{"AUICodeRevocation"}
+		,{"AUICodeSelectCursor"}})
+	require:Start()
 	AUIPlugin.g_AUIIMEManager:Setup()
 end
 
