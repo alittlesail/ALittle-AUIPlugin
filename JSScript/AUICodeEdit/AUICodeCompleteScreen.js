@@ -3,8 +3,8 @@ if (typeof AUIPlugin === "undefined") window.AUIPlugin = {};
 
 ALittle.RegStruct(1773085126, "AUIPlugin.AUICodeCompleteItemInfo", {
 name : "AUIPlugin.AUICodeCompleteItemInfo", ns_name : "AUIPlugin", rl_name : "AUICodeCompleteItemInfo", hash_code : 1773085126,
-name_list : ["_item_button","_item_title","_tag_image","_item","pos","upper","complete"],
-type_list : ["ALittle.TextRadioButton","ALittle.Text","ALittle.Image","ALittle.DisplayObject","List<int>","string","lua.ABnfQueryCompleteInfo"],
+name_list : ["_item","_item_button","_item_title","_tag_image","pos","upper","complete"],
+type_list : ["ALittle.DisplayObject","ALittle.TextRadioButton","ALittle.Text","ALittle.Image","List<int>","string","lua.ABnfQueryCompleteInfo"],
 option_map : {}
 })
 ALittle.RegStruct(-1149003083, "lua.ABnfQueryCompleteInfo", {
@@ -55,12 +55,16 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 		return this._complete !== undefined;
 	},
 	SelectUp : function() {
-		let target = this.GetSelectIndex();
-		target = target - (1);
-		if (target < 1) {
+		let target_index = this.GetSelectIndex();
+		if (target_index === undefined) {
+			target_index = 1;
+		} else {
+			target_index = target_index - (1);
+		}
+		if (target_index < 1) {
 			return;
 		}
-		let item = this._screen.childs[target - 1];
+		let item = this._screen.childs[target_index - 1];
 		let info = item._user_data;
 		info._item_button.selected = true;
 		if (info.complete.descriptor !== undefined) {
@@ -70,20 +74,24 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 		}
 		let delta = this._screen.container.height - this._screen.height;
 		if (delta > 0) {
-			let offset = (target - 1) * this._item_height + this._screen.container_y;
+			let offset = (target_index - 1) * this._item_height + this._screen.container_y;
 			if (offset < 0) {
-				this._screen.right_scrollbar.offset_rate = ((target - 1) * this._item_height) / delta;
+				this._screen.right_scrollbar.offset_rate = ((target_index - 1) * this._item_height) / delta;
 				this._screen.AdjustScrollBar();
 			}
 		}
 	},
 	SelectDown : function() {
-		let target = this.GetSelectIndex();
-		target = target + (1);
-		if (target > this._screen.child_count) {
+		let target_index = this.GetSelectIndex();
+		if (target_index === undefined) {
+			target_index = 1;
+		} else {
+			target_index = target_index + (1);
+		}
+		if (target_index > this._screen.child_count) {
 			return;
 		}
-		let item = this._screen.childs[target - 1];
+		let item = this._screen.childs[target_index - 1];
 		let info = item._user_data;
 		info._item_button.selected = true;
 		if (info.complete.descriptor !== undefined) {
@@ -93,28 +101,29 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 		}
 		let delta = this._screen.container.height - this._screen.height;
 		if (delta > 0) {
-			let offset = target * this._item_height + this._screen.container_y;
+			let offset = target_index * this._item_height + this._screen.container_y;
 			if (offset > this._screen.height) {
-				this._screen.right_scrollbar.offset_rate = (target * this._item_height - this._screen.height) / delta;
+				this._screen.right_scrollbar.offset_rate = (target_index * this._item_height - this._screen.height) / delta;
 				this._screen.AdjustScrollBar();
 			}
 		}
 	},
 	DoSelect : function() {
-		let target = this.GetSelectIndex();
-		if (target === undefined) {
+		let target_index = this.GetSelectIndex();
+		if (target_index === undefined) {
+			return false;
+		}
+		let item = this._screen.childs[target_index - 1];
+		let complete = item._user_data.complete;
+		let text = complete.insert;
+		if (text === undefined) {
+			text = complete.display;
+		}
+		if (text === undefined) {
 			return false;
 		}
 		this._edit.select_cursor.StartLineChar(this._complete.line_start, this._complete.char_start - 1);
 		this._edit.select_cursor.UpdateLineChar(this._edit.cursor.line, this._edit.cursor.char);
-		let item = this._screen.childs[target - 1];
-		let text = undefined;
-		let complete = item._user_data.complete;
-		if (complete.insert !== undefined) {
-			text = complete.insert;
-		} else {
-			text = complete.display;
-		}
 		let result = this._edit.InsertText(text, true);
 		this.Hide();
 		return result;
@@ -160,7 +169,7 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 				}
 			}
 			let max_width = 200.0;
-			this._item_group = new Map();
+			let item_group = new Map();
 			this._item_list = [];
 			let ___OBJECT_3 = this._complete.complete_list;
 			for (let index = 1; index <= ___OBJECT_3.length; ++index) {
@@ -175,12 +184,17 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 					item_info = {};
 					item_info._item = AUIPlugin.g_Control.CreateControl("code_complete_item", item_info);
 				}
-				item_info._item_button.group = this._item_group;
+				item_info._item_button.group = item_group;
+				item_info._item_button.selected = false;
 				item_info._item_title.text = info.display;
-				if (info.insert === undefined) {
-					item_info.upper = ALittle.String_Upper(info.display);
+				let text = info.insert;
+				if (text === undefined) {
+					text = info.display;
+				}
+				if (text !== undefined) {
+					item_info.upper = ALittle.String_Upper(text);
 				} else {
-					item_info.upper = ALittle.String_Upper(info.insert);
+					item_info.upper = undefined;
 				}
 				item_info._tag_image.texture_name = this._edit.language.QueryCompleteIcon(info.tag);
 				item_info._item._user_data = item_info;
@@ -252,18 +266,12 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 			}
 		}
 		ALittle.List_Sort(sort_list, AUIPlugin.AUICodeCompleteScreen.ItemInfoSort);
-		count = 0;
-		let descriptor = undefined;
 		let ___OBJECT_7 = sort_list;
 		for (let index = 1; index <= ___OBJECT_7.length; ++index) {
 			let info = ___OBJECT_7[index - 1];
 			if (info === undefined) break;
-			if (this._screen.child_count === 0) {
-				info._item_button.selected = true;
-				descriptor = info.complete.descriptor;
-			}
 			this._screen.AddChild(info._item);
-			if (count >= 50) {
+			if (index >= 50) {
 				break;
 			}
 		}
@@ -276,10 +284,10 @@ AUIPlugin.AUICodeCompleteScreen = JavaScript.Class(undefined, {
 		} else {
 			this._screen.height = 200;
 		}
-		if (descriptor !== undefined) {
-			this.ShowTip(descriptor);
-		} else {
-			this.HideTip();
+		let [edit_x, edit_y] = this._edit.CalcPosition(this._edit.cursor.line, this._edit.cursor.char, true);
+		let [x, y] = this._screen.LocalToGlobal(this._edit);
+		if (y + this._screen.height > this._edit.height || this._screen.y + this._screen.height < edit_y) {
+			this._screen.y = edit_y - this._screen.height;
 		}
 		return true;
 	},

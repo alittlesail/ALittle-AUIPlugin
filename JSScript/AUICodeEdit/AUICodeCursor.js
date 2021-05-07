@@ -71,17 +71,18 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 			-- count;
 		}
 		let cur_char = line.char_list[this._it_char + 1 - 1];
-		let is_word = ALittle.String_IsWordChar(cur_char.char);
+		let is_code = ALittle.String_IsCodeChar(cur_char.char);
+		let is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
 		let it_end = this._it_char;
 		for (let i = this._it_char + 1; i <= count; i += 1) {
-			if (ALittle.String_IsWordChar(line.char_list[i - 1].char) !== is_word) {
+			if (ALittle.String_IsCodeChar(line.char_list[i - 1].char) !== is_code || ALittle.String_IsAsciiChar(line.char_list[i - 1].char) !== is_ascii) {
 				break;
 			}
 			it_end = i;
 		}
 		let it_start = this._it_char;
 		for (let i = this._it_char; i >= 1; i += -1) {
-			if (ALittle.String_IsWordChar(line.char_list[i - 1].char) !== is_word) {
+			if (ALittle.String_IsCodeChar(line.char_list[i - 1].char) !== is_code || ALittle.String_IsAsciiChar(line.char_list[i - 1].char) !== is_ascii) {
 				break;
 			}
 			it_start = i - 1;
@@ -213,10 +214,11 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 				return;
 			}
 			let cur_char = line.char_list[this._it_char - 1];
-			let is_word = ALittle.String_IsWordChar(cur_char.char);
+			let is_code = ALittle.String_IsCodeChar(cur_char.char);
+			let is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
 			let it_char = this._it_char - 1;
 			while (it_char > 0) {
-				if (ALittle.String_IsWordChar(line.char_list[it_char - 1].char) !== is_word) {
+				if (ALittle.String_IsCodeChar(line.char_list[it_char - 1].char) !== is_code || ALittle.String_IsAsciiChar(line.char_list[it_char - 1].char) !== is_ascii) {
 					this.SetLineChar(this._it_line, it_char);
 					return;
 				}
@@ -252,11 +254,12 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 				return;
 			}
 			let cur_char = line.char_list[this._it_char + 1 - 1];
-			let is_word = ALittle.String_IsWordChar(cur_char.char);
+			let is_code = ALittle.String_IsCodeChar(cur_char.char);
+			let is_ascii = ALittle.String_IsAsciiChar(cur_char.char);
 			let it_char = this._it_char + 1;
 			while (it_char <= count) {
-				if (ALittle.String_IsWordChar(line.char_list[it_char + 1 - 1].char) !== is_word) {
-					this.SetLineChar(this._it_line, it_char);
+				if (ALittle.String_IsCodeChar(line.char_list[it_char - 1].char) !== is_code || ALittle.String_IsAsciiChar(line.char_list[it_char - 1].char) !== is_ascii) {
+					this.SetLineChar(this._it_line, it_char - 1);
 					return;
 				}
 				++ it_char;
@@ -352,7 +355,7 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 			if (need_revoke) {
 				let new_it_line = this._it_line;
 				let new_it_char = this._it_char;
-				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteLeftRevoke, this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
+				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteLeftRevoke, this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
 				if (revoke_bind !== undefined) {
 					revoke_bind.PushRevoke(revoke);
 				} else {
@@ -413,7 +416,7 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 		}
 		this._edit.code_screen.AdjustScrollBar();
 		if (need_revoke) {
-			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteLeftRevoke, this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
+			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteLeftRevoke, this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
 			if (revoke_bind !== undefined) {
 				revoke_bind.PushRevoke(revoke);
 			} else {
@@ -476,7 +479,7 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 			let new_it_line = this._it_line;
 			let new_it_char = this._it_char;
 			if (need_revoke) {
-				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteRightRevoke, this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
+				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteRightRevoke, this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
 				if (revoke_bind !== undefined) {
 					revoke_bind.PushRevoke(revoke);
 				} else {
@@ -534,7 +537,7 @@ AUIPlugin.AUICodeCursor = JavaScript.Class(ALittle.Quad, {
 		}
 		this._edit.code_screen.AdjustScrollBar();
 		if (need_revoke) {
-			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteRightRevoke, this._edit, this, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
+			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteRightRevoke, this._edit, old_it_line, old_it_char, new_it_line, new_it_char, revoke_content, revoke_bind === undefined);
 			if (revoke_bind !== undefined) {
 				revoke_bind.PushRevoke(revoke);
 			} else {

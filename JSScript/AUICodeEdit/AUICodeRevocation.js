@@ -17,9 +17,8 @@ option_map : {}
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeDeleteLeftRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
+	Ctor : function(edit, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -28,26 +27,29 @@ AUIPlugin.AUICodeDeleteLeftRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
-		this._cursor.DeleteLeft(false);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+		this._edit.cursor.DeleteLeft(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
 		this._edit.InsertText(this._content, false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeDeleteLeftRevoke");
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeDeleteRightRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
+	Ctor : function(edit, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -56,28 +58,30 @@ AUIPlugin.AUICodeDeleteRightRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
-		this._cursor.DeleteRight(false);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
+		this._edit.cursor.DeleteRight(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
 		this._edit.InsertText(this._content, false);
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeDeleteRightRevoke");
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeInsertTextRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, select_cursor, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
+	Ctor : function(edit, old_it_line, old_it_char, new_it_line, new_it_char, content, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line = old_it_line;
 		this._old_it_char = old_it_char;
 		this._new_it_line = new_it_line;
@@ -86,29 +90,30 @@ AUIPlugin.AUICodeInsertTextRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
 		this._edit.InsertText(this._content, false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._select_cursor.StartLineChar(this._old_it_line, this._old_it_char);
-		this._select_cursor.UpdateLineChar(this._new_it_line, this._new_it_char);
-		this._select_cursor.DeleteSelect(false);
-		this._cursor.SetLineChar(this._old_it_line, this._old_it_char);
+		this._edit.select_cursor.StartLineChar(this._old_it_line, this._old_it_char);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line, this._new_it_char);
+		this._edit.select_cursor.DeleteSelect(false);
+		this._edit.cursor.SetLineChar(this._old_it_line, this._old_it_char);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeInsertTextRevoke");
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeDeleteSelectRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, select_cursor, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line, new_it_char, content, dispatch_event) {
+	Ctor : function(edit, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line, new_it_char, content, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -119,29 +124,30 @@ AUIPlugin.AUICodeDeleteSelectRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
-		this._select_cursor.DeleteSelect(false);
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+		this._edit.select_cursor.DeleteSelect(false);
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._cursor.SetLineChar(this._new_it_line, this._new_it_char);
+		this._edit.select_cursor.Hide();
+		this._edit.cursor.SetLineChar(this._new_it_line, this._new_it_char);
 		this._edit.InsertText(this._content, false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeDeleteSelectRevoke");
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeMultiTabInsertRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, select_cursor, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line_start, new_it_char_start, new_it_line_end, new_it_char_end, dispatch_event) {
+	Ctor : function(edit, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line_start, new_it_char_start, new_it_line_end, new_it_char_end, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -153,29 +159,29 @@ AUIPlugin.AUICodeMultiTabInsertRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
 		this._edit.MultiTabInsert(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
-		this._select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+		this._edit.select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
 		this._edit.MultiTabDelete(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeMultiTabInsertRevoke");
 
 if (ALittle.RevokeObject === undefined) throw new Error(" extends class:ALittle.RevokeObject is undefined");
 AUIPlugin.AUICodeMultiTabDeleteRevoke = JavaScript.Class(ALittle.RevokeObject, {
-	Ctor : function(edit, cursor, select_cursor, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line_start, new_it_char_start, new_it_line_end, new_it_char_end, dispatch_event) {
+	Ctor : function(edit, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, new_it_line_start, new_it_char_start, new_it_line_end, new_it_char_end, dispatch_event) {
 		this._edit = edit;
-		this._cursor = cursor;
-		this._select_cursor = select_cursor;
 		this._old_it_line_start = old_it_line_start;
 		this._old_it_char_start = old_it_char_start;
 		this._old_it_line_end = old_it_line_end;
@@ -187,20 +193,22 @@ AUIPlugin.AUICodeMultiTabDeleteRevoke = JavaScript.Class(ALittle.RevokeObject, {
 		this._dispatch_event = dispatch_event;
 	},
 	Forward : function() {
-		this._select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
-		this._select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
+		this._edit.select_cursor.StartLineChar(this._old_it_line_start, this._old_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._old_it_line_end, this._old_it_char_end);
 		this._edit.MultiTabDelete(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 	Back : function() {
-		this._select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
-		this._select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
+		this._edit.select_cursor.StartLineChar(this._new_it_line_start, this._new_it_char_start);
+		this._edit.select_cursor.UpdateLineChar(this._new_it_line_end, this._new_it_char_end);
 		this._edit.MultiTabInsert(false);
 		if (this._dispatch_event) {
 			this._edit.DispatchEvent(___all_struct.get(958494922), {});
 		}
+		this._edit.FocusLineCharToCenter(this._edit.cursor.line, this._edit.cursor.char);
 	},
 }, "AUIPlugin.AUICodeMultiTabDeleteRevoke");
 

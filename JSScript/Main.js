@@ -29,17 +29,38 @@ AUIPlugin.__Plugin_Setup = function(control, module_base_path, script_base_path)
 		AUIPlugin.g_Control = control;
 		AUIPlugin.g_ModuleBasePath = module_base_path;
 		AUIPlugin.g_ScriptBasePath = script_base_path;
-		await RequireFromPaths(script_base_path, "AUI/", ["AUIWebLoginManager.alittle", "AUIVersionManager.alittle", "AUITool.alittle"
-			, "AUIStatLayout.alittle", "AUIRightMenu.alittle", "AUIImageCutPlugin.alittle"
-			, "AUIIMEManager.alittle", "AUIGridCutImageDialog.alittle", "AUIFileTreeLayout.alittle"
-			, "AUIFileSelectLayout.alittle", "AUIFileSelectDialog.alittle", "AUIFileRemoteSelectLayout.alittle"
-			, "AUIEditImageDialog.alittle", "AUIDrawingBoard.alittle"]);
-		await RequireFromPaths(script_base_path, "AUICodeEdit/", ["AUICodeSelectCursor.alittle", "AUICodeRevocation.alittle", "AUICodeProject.alittle"
-			, "AUICodeParamList.alittle", "AUICodeLineNumber.alittle", "AUICodeLineContainer.alittle"
-			, "AUICodeLanguage.alittle", "AUICodeFilterScreen.alittle", "AUICodeEdit.alittle"
-			, "AUICodeDefine.alittle", "AUICodeCursor.alittle", "AUICodeComponent.alittle"
-			, "AUICodeCompleteScreen.alittle", "ABnf/AUICodeCommon.alittle", "ABnf/AUICodeALittleScript.alittle"
-			, "ABnf/AUICodeABnf.alittle"]);
+		let require = ALittle.NewObject(ALittle.Require);
+		require.AddPaths(script_base_path, "AUI/", [["AUIDrawingBoard"]
+			,["AUIEditImageDialog"]
+			,["AUIFileRemoteSelectLayout"]
+			,["AUIFileSelectDialog"]
+			,["AUIFileSelectLayout"]
+			,["AUIFileTreeLayout"]
+			,["AUIGridCutImageDialog"]
+			,["AUIIMEManager"]
+			,["AUIImageCutPlugin"]
+			,["AUIRightMenu"]
+			,["AUIStatLayout"]
+			,["AUITool"]
+			,["AUIVersionManager"]
+			,["AUIWebLoginManager"]]);
+		require.AddPaths(script_base_path, "AUICodeEdit/", [["ABnf/AUICodeABnf","AUICodeProject","AUICodeLanguage"]
+			,["ABnf/AUICodeALittleScript","AUICodeProject","AUICodeLanguage"]
+			,["ABnf/AUICodeCommon","AUICodeProject","AUICodeLanguage"]
+			,["AUICodeCompleteScreen"]
+			,["AUICodeComponent"]
+			,["AUICodeCursor"]
+			,["AUICodeDefine"]
+			,["AUICodeEdit"]
+			,["AUICodeFilterScreen"]
+			,["AUICodeLanguage"]
+			,["AUICodeLineContainer"]
+			,["AUICodeLineNumber"]
+			,["AUICodeParamList"]
+			,["AUICodeProject"]
+			,["AUICodeRevocation"]
+			,["AUICodeSelectCursor"]]);
+		await require.Start();
 		AUIPlugin.g_AUIIMEManager.Setup();
 		___COROUTINE();
 	});

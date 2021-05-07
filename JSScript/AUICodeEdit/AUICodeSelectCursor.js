@@ -302,7 +302,7 @@ AUIPlugin.AUICodeSelectCursor = JavaScript.Class(undefined, {
 				this._edit.AdjustCodeScreen(line.container.width + AUIPlugin.CODE_LINE_NUMBER_WIDTH);
 			}
 			if (need_revoke) {
-				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteSelectRevoke, this._edit, this._edit.cursor, this, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, it_line_start, it_char_start, revoke_content, revoke_bind === undefined);
+				let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteSelectRevoke, this._edit, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, it_line_start, it_char_start, revoke_content, revoke_bind === undefined);
 				if (revoke_bind !== undefined) {
 					revoke_bind.PushRevoke(revoke);
 				} else {
@@ -402,7 +402,7 @@ AUIPlugin.AUICodeSelectCursor = JavaScript.Class(undefined, {
 		}
 		this._edit.AdjustCodeScreen(max_width);
 		if (need_revoke) {
-			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteSelectRevoke, this._edit, this._edit.cursor, this, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, it_line_start, it_char_start, revoke_start + ALittle.String_Join(revoke_center, "") + revoke_end, revoke_bind === undefined);
+			let revoke = ALittle.NewObject(AUIPlugin.AUICodeDeleteSelectRevoke, this._edit, old_it_line_start, old_it_char_start, old_it_line_end, old_it_char_end, it_line_start, it_char_start, revoke_start + ALittle.String_Join(revoke_center, "") + revoke_end, revoke_bind === undefined);
 			if (revoke_bind !== undefined) {
 				revoke_bind.PushRevoke(revoke);
 			} else {
