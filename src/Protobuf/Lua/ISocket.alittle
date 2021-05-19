@@ -410,7 +410,7 @@ public class ISocket
         }
 
 		if (socket._disconnected_callback != null)
-			socket._disconnected_callback(socket);
+            socket._disconnected_callback(socket);
     }
 
 	public static HandleReadInt(int id, int value)
