@@ -44,9 +44,9 @@ AUIPlugin.__Plugin_Setup = function(control, module_base_path, script_base_path)
 			,["AUITool"]
 			,["AUIVersionManager"]
 			,["AUIWebLoginManager"]]);
-		require.AddPaths(script_base_path, "AUICodeEdit/", [["ABnf/AUICodeABnf","AUICodeProject","AUICodeLanguage"]
-			,["ABnf/AUICodeALittleScript","AUICodeProject","AUICodeLanguage"]
-			,["ABnf/AUICodeCommon","AUICodeProject","AUICodeLanguage"]
+		require.AddPaths(script_base_path, "AUICodeEdit/", [["ABnf/AUICodeABnf","AUICodeLanguage","AUICodeProject"]
+			,["ABnf/AUICodeALittleScript","AUICodeLanguage","AUICodeProject"]
+			,["ABnf/AUICodeCommon","AUICodeLanguage","AUICodeProject"]
 			,["AUICodeCompleteScreen"]
 			,["AUICodeComponent"]
 			,["AUICodeCursor"]
