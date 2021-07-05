@@ -6,7 +6,7 @@ public class AUICodeCursor : ALittle.Quad
     // 光标闪烁相关
     private double _flash_alpha = 0;
     private double _flash_dir = 0.05;
-    private ALittle.LoopFunction _loop;
+    private ALittle.LoopObject _loop;
 
     // 编辑控件
     private AUICodeEdit _edit;
@@ -43,7 +43,7 @@ public class AUICodeCursor : ALittle.Quad
     // 显示光标
     public fun Show([Nullable]double x, [Nullable]double y)
     {
-        if (this._loop == null) this._loop = new ALittle.LoopFunction(bind(this.Update, this), -1, 1, 1);
+        if (this._loop == null) this._loop = new ALittle.LoopFrame(bind(this.Update, this));
 		if (!A_LoopSystem.HasUpdater(this._loop)) A_LoopSystem.AddUpdater(this._loop);
         this.visible = true;
     }
@@ -636,7 +636,7 @@ public class AUICodeCursor : ALittle.Quad
         this.visible = false;
     }
 
-    private fun Update()
+    private fun Update(int frame_time)
     {
         if (this.abs_visible)
         {

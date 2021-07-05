@@ -18,6 +18,10 @@ function AUIPlugin.AUIVersionManager:Ctor(ip, port, account, module_name)
 end
 
 function AUIPlugin.AUIVersionManager:Shutdown()
+	if self._version_check_timer ~= nil then
+		A_LoopSystem:RemoveTimer(self._version_check_timer)
+		self._version_check_timer = nil
+	end
 	if self._dialog ~= nil then
 		A_LayerManager:RemoveFromModal(self._dialog)
 		self._dialog = nil
@@ -73,8 +77,10 @@ function AUIPlugin.AUIVersionManager:HandleRestartClick(event)
 end
 
 function AUIPlugin.AUIVersionManager:CheckVersionUpdate()
-	local loop = ALittle.LoopFunction(Lua.Bind(self.CheckVersionUpdateImpl, self), -1, 3600000, 0)
-	loop:Start()
+	if self._version_check_timer ~= nil then
+		return
+	end
+	self._version_check_timer = A_LoopSystem:AddTimer(0, Lua.Bind(self.CheckVersionUpdateImpl, self), -1, 3600000)
 end
 
 function AUIPlugin.AUIVersionManager:CheckVersionUpdateImpl()

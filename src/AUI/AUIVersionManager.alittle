@@ -6,6 +6,7 @@ public class AUIVersionManager
 	private ALittle.VersionSystem _version_system;		// 版本管理系统
 	private string _version_ip;							// 版本服务器的IP
 	private int	_version_port;							// 版本服务器的端口
+    private int _version_check_timer;					// 版本检查定时器
 	
 	private ALittle.Dialog _dialog;						// 版本对话框
 	private ALittle.DisplayObject _notice_content;		// 版本提示内容
@@ -29,6 +30,12 @@ public class AUIVersionManager
 	
 	public fun Shutdown()
 	{
+        if (this._version_check_timer != null)
+        {
+            A_LoopSystem.RemoveTimer(this._version_check_timer);
+            this._version_check_timer = null;
+        }
+
 		if (this._dialog != null)
 		{
 			A_LayerManager.RemoveFromModal(this._dialog);
@@ -109,8 +116,9 @@ public class AUIVersionManager
 	// 定时检查版本
 	public fun CheckVersionUpdate()
 	{
-		var loop = new ALittle.LoopFunction(bind(this.CheckVersionUpdateImpl, this), -1, 3600000, 0);
-		loop.Start();
+        if (this._version_check_timer != null) return;
+
+		this._version_check_timer = A_LoopSystem.AddTimer(0, bind(this.CheckVersionUpdateImpl, this), -1, 3600000);
 	}
 	public async fun CheckVersionUpdateImpl()
 	{

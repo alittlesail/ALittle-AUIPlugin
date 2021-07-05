@@ -47,7 +47,7 @@ end
 
 function AUIPlugin.AUICodeCursor:Show(x, y)
 	if self._loop == nil then
-		self._loop = ALittle.LoopFunction(Lua.Bind(self.Update, self), -1, 1, 1)
+		self._loop = ALittle.LoopFrame(Lua.Bind(self.Update, self))
 	end
 	if not A_LoopSystem:HasUpdater(self._loop) then
 		A_LoopSystem:AddUpdater(self._loop)
@@ -601,7 +601,7 @@ function AUIPlugin.AUICodeCursor:Hide()
 	self.visible = false
 end
 
-function AUIPlugin.AUICodeCursor:Update()
+function AUIPlugin.AUICodeCursor:Update(frame_time)
 	if self.abs_visible then
 		self._flash_alpha = self._flash_alpha + self._flash_dir
 		if (self._flash_dir < 0 and self._flash_alpha < -0.05) or (self._flash_dir > 0 and self._flash_alpha > 1.5) then
