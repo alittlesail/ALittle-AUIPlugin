@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 protected var CODE_LINE_HEIGHT = 20;

@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 public class AUICodeSelectCursor

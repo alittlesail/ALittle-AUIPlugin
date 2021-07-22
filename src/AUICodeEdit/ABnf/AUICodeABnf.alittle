@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 private var g_ABnfColor:Map<int, ABnfColor>;

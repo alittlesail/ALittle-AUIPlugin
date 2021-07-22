@@ -44,22 +44,6 @@ AUIPlugin.__Plugin_Setup = function(control, module_base_path, script_base_path)
 			,["AUITool"]
 			,["AUIVersionManager"]
 			,["AUIWebLoginManager"]]);
-		require.AddPaths(script_base_path, "AUICodeEdit/", [["ABnf/AUICodeABnf","AUICodeLanguage","AUICodeProject"]
-			,["ABnf/AUICodeALittleScript","AUICodeLanguage","AUICodeProject"]
-			,["ABnf/AUICodeCommon","AUICodeLanguage","AUICodeProject"]
-			,["AUICodeCompleteScreen"]
-			,["AUICodeComponent"]
-			,["AUICodeCursor"]
-			,["AUICodeDefine"]
-			,["AUICodeEdit"]
-			,["AUICodeFilterScreen"]
-			,["AUICodeLanguage"]
-			,["AUICodeLineContainer"]
-			,["AUICodeLineNumber"]
-			,["AUICodeParamList"]
-			,["AUICodeProject"]
-			,["AUICodeRevocation"]
-			,["AUICodeSelectCursor"]]);
 		await require.Start();
 		AUIPlugin.g_AUIIMEManager.Setup();
 		___COROUTINE();

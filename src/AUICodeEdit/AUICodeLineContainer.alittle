@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 protected class AUICodeLineContainer : ALittle.DisplayLayout

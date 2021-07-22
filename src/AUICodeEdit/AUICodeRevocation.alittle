@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 // 向左删除一个字

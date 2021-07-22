@@ -1,4 +1,5 @@
 
+[Language(Lua)]
 namespace AUIPlugin;
 
 protected var g_ABnfProjectMap:Map<string, AUICodeProject> = ALittle.CreateValueWeakMap();

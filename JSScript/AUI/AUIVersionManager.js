@@ -8,6 +8,10 @@ AUIPlugin.AUIVersionManager = JavaScript.Class(undefined, {
 		this._version_port = port;
 	},
 	Shutdown : function() {
+		if (this._version_check_timer !== undefined) {
+			A_LoopSystem.RemoveTimer(this._version_check_timer);
+			this._version_check_timer = undefined;
+		}
 		if (this._dialog !== undefined) {
 			A_LayerManager.RemoveFromModal(this._dialog);
 			this._dialog = undefined;
@@ -54,8 +58,10 @@ AUIPlugin.AUIVersionManager = JavaScript.Class(undefined, {
 		ALittle.System_Restart();
 	},
 	CheckVersionUpdate : function() {
-		let loop = ALittle.NewObject(ALittle.LoopFunction, this.CheckVersionUpdateImpl.bind(this), -1, 3600000, 0);
-		loop.Start();
+		if (this._version_check_timer !== undefined) {
+			return;
+		}
+		this._version_check_timer = A_LoopSystem.AddTimer(0, this.CheckVersionUpdateImpl.bind(this), -1, 3600000);
 	},
 	CheckVersionUpdateImpl : async function() {
 		if (this._version_system.doing) {

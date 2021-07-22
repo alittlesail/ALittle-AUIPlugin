@@ -64,6 +64,7 @@ public await static __Plugin_Setup(ALittle.ControlSystem control, string module_
     [Language(Lua)]
     require.AddPaths(script_base_path, "Protobuf/", paths("src/Protobuf"));
     require.AddPaths(script_base_path, "AUI/", paths("src/AUI"));
+    [Language(Lua)]
     require.AddPaths(script_base_path, "AUICodeEdit/", paths("src/AUICodeEdit"));
     require.Start();
 
