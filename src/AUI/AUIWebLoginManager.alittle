@@ -115,7 +115,7 @@ public class AUIWebLoginManager : ALittle.EventDispatcher
             var error, result = GatewayServer.HandleQRouteInfo(client, param);
             if (error != null)
             {
-                ALittle.Log(error); 
+                ALittle.Log("GatewayServer.QRouteInfo", this._logingate_type, error); 
                 this._msg_client = null;
                 this.OnConnectFailed();
                 A_LoopSystem.AddTimer(5000, bind(this.Connect, this));
