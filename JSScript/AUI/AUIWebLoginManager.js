@@ -137,7 +137,7 @@ AUIPlugin.AUIWebLoginManager = JavaScript.Class(ALittle.EventDispatcher, {
 			let client = ALittle.CreateHttpSender(this._logingate_ip, this._logingate_port);
 			let [error, result] = await ALittle.IHttpSender.Invoke("GatewayServer.QRouteInfo", client, param);
 			if (error !== undefined) {
-				ALittle.Log("GatewayServer.QRouteInfo", this._logingate_type, error);
+				ALittle.Log(error);
 				this._msg_client = undefined;
 				this.OnConnectFailed();
 				A_LoopSystem.AddTimer(5000, this.Connect.bind(this));

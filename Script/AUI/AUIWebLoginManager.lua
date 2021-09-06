@@ -147,7 +147,7 @@ function AUIPlugin.AUIWebLoginManager:Connect()
 		local client = ALittle.CreateHttpSender(self._logingate_ip, self._logingate_port)
 		local error, result = ALittle.IHttpSender.Invoke("GatewayServer.QRouteInfo", client, param)
 		if error ~= nil then
-			ALittle.Log("GatewayServer.QRouteInfo", self._logingate_type, error)
+			ALittle.Log(error)
 			self._msg_client = nil
 			self:OnConnectFailed()
 			A_LoopSystem:AddTimer(5000, Lua.Bind(self.Connect, self))
