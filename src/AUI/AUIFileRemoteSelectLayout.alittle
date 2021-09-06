@@ -30,6 +30,8 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
 
 	private Map<string, bool> _ext_map;
     private AUIFileRemoteSelectItemUserData _cur_selected;
+    private bool _cur_file_or_dir = false;			// 当前选中的是否是文件或者文件夹
+    private bool _select_file_or_dir = false;		// 外部要求选中的是文件还是文件夹
 
     public fun Init(List<string> ext_list)
     {
@@ -46,6 +48,8 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
 				this._ext_map[ALittle.String_Upper(ext)] = true;
         }
         this._cur_selected = null;
+		// 清空所有
+		this._scroll_list.RemoveAllChild();
     }
 
 	public fun Release()
@@ -56,12 +60,15 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
 			this._thread = null;
         }
         this._cur_selected = null;
+		// 清空所有
+		this._scroll_list.RemoveAllChild();
     }
 
     public get base_path() : string { return this._base_path; }
 
-	public await fun ShowSelect() : string
+	public await fun ShowSelect(bool file_or_dir) : string
 	{
+        this._select_file_or_dir = file_or_dir;
         this._thread = co;
 		return yield;
     }
@@ -89,7 +96,7 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
 		info.file.visible = true;
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(this, this.HandleItemClick);
-		info.button.AddEventListener(this, this.HandleItemSelected);
+		info.button.AddEventListener(this, this.HandleItemFileSelected);
         info.button.group = this._group;
 	
 		var user_data = new AUIFileRemoteSelectItemUserData();
@@ -111,7 +118,7 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
 
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(this, this.HandleItemClick);
-		info.button.AddEventListener(this, this.HandleItemSelected);
+		info.button.AddEventListener(this, this.HandleItemDirSelected);
         info.button.group = this._group;
 	
 		var user_data = new AUIFileRemoteSelectItemUserData();
@@ -128,6 +135,18 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
         if (this._cur_selected == null)
         {
             g_AUITool.ShowNotice("提示", "请先选中文件或者文件夹");
+            return;
+        }
+
+        if (this._cur_file_or_dir == true && this._select_file_or_dir == false)
+        {
+            g_AUITool.ShowNotice("提示", "请选择文件夹");
+            return;
+        }
+
+        if (this._cur_file_or_dir == false && this._select_file_or_dir == true)
+        {
+            g_AUITool.ShowNotice("提示", "请选择文件");
             return;
         }
 
@@ -277,9 +296,16 @@ public class AUIFileRemoteSelectLayout : ALittle.DisplayLayout
         }
 	}
 
-    public fun HandleItemSelected(ALittle.UIChangedEvent event)
+    public fun HandleItemFileSelected(ALittle.UIChangedEvent event)
     {
 		this._cur_selected = event.target._user_data;
+        this._cur_file_or_dir = true;
+    }
+
+    public fun HandleItemDirSelected(ALittle.UIChangedEvent event)
+    {
+		this._cur_selected = event.target._user_data;
+        this._cur_file_or_dir = false;
     }
 
 	// 检查资源名是否合法

@@ -37,6 +37,8 @@ if (ALittle.DisplayLayout === undefined) throw new Error(" extends class:ALittle
 AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 	Ctor : function() {
 		this._group = new Map();
+		this._cur_file_or_dir = false;
+		this._select_file_or_dir = false;
 	},
 	Init : function(ext_list) {
 		this._real_size = 100;
@@ -53,6 +55,7 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 			}
 		}
 		this._cur_selected = undefined;
+		this._scroll_list.RemoveAllChild();
 	},
 	Release : function() {
 		if (this._thread !== undefined) {
@@ -60,12 +63,14 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 			this._thread = undefined;
 		}
 		this._cur_selected = undefined;
+		this._scroll_list.RemoveAllChild();
 	},
 	get base_path() {
 		return this._base_path;
 	},
-	ShowSelect : function() {
+	ShowSelect : function(file_or_dir) {
 		return new Promise((function(___COROUTINE, ___) {
+			this._select_file_or_dir = file_or_dir;
 			this._thread = ___COROUTINE;
 			return;
 		}).bind(this));
@@ -97,7 +102,7 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		info.file.visible = true;
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(___all_struct.get(-449066808), this, this.HandleItemClick);
-		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemSelected);
+		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemFileSelected);
 		info.button.group = this._group;
 		let user_data = {};
 		user_data.path = rel_path;
@@ -114,7 +119,7 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 		info.dir.visible = true;
 		info.button.drag_trans_target = this._scroll_list;
 		info.button.AddEventListener(___all_struct.get(-449066808), this, this.HandleItemClick);
-		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemSelected);
+		info.button.AddEventListener(___all_struct.get(958494922), this, this.HandleItemDirSelected);
 		info.button.group = this._group;
 		let user_data = {};
 		user_data.path = rel_path;
@@ -126,6 +131,14 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 	HandleSelectConfirmClick : function(event) {
 		if (this._cur_selected === undefined) {
 			g_AUITool.ShowNotice("提示", "请先选中文件或者文件夹");
+			return;
+		}
+		if (this._cur_file_or_dir === true && this._select_file_or_dir === false) {
+			g_AUITool.ShowNotice("提示", "请选择文件夹");
+			return;
+		}
+		if (this._cur_file_or_dir === false && this._select_file_or_dir === true) {
+			g_AUITool.ShowNotice("提示", "请选择文件");
 			return;
 		}
 		if (this._thread !== undefined) {
@@ -250,8 +263,13 @@ AUIPlugin.AUIFileRemoteSelectLayout = JavaScript.Class(ALittle.DisplayLayout, {
 			}
 		}
 	},
-	HandleItemSelected : function(event) {
+	HandleItemFileSelected : function(event) {
 		this._cur_selected = event.target._user_data;
+		this._cur_file_or_dir = true;
+	},
+	HandleItemDirSelected : function(event) {
+		this._cur_selected = event.target._user_data;
+		this._cur_file_or_dir = false;
 	},
 	CheckResourceName : function(name) {
 		let len = ALittle.String_Len(name);

@@ -45,6 +45,8 @@ AUIPlugin.AUIFileRemoteSelectLayout = Lua.Class(ALittle.DisplayLayout, "AUIPlugi
 
 function AUIPlugin.AUIFileRemoteSelectLayout:Ctor()
 	___rawset(self, "_group", {})
+	___rawset(self, "_cur_file_or_dir", false)
+	___rawset(self, "_select_file_or_dir", false)
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:Init(ext_list)
@@ -59,6 +61,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:Init(ext_list)
 		end
 	end
 	self._cur_selected = nil
+	self._scroll_list:RemoveAllChild()
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:Release()
@@ -67,14 +70,16 @@ function AUIPlugin.AUIFileRemoteSelectLayout:Release()
 		self._thread = nil
 	end
 	self._cur_selected = nil
+	self._scroll_list:RemoveAllChild()
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout.__getter:base_path()
 	return self._base_path
 end
 
-function AUIPlugin.AUIFileRemoteSelectLayout:ShowSelect()
+function AUIPlugin.AUIFileRemoteSelectLayout:ShowSelect(file_or_dir)
 	local ___COROUTINE = coroutine.running()
+	self._select_file_or_dir = file_or_dir
 	self._thread = ___COROUTINE
 	return coroutine.yield()
 end
@@ -110,7 +115,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateFileItem(file_name, rel_path,
 	info.file.visible = true
 	info.button.drag_trans_target = self._scroll_list
 	info.button:AddEventListener(___all_struct[-449066808], self, self.HandleItemClick)
-	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemSelected)
+	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemFileSelected)
 	info.button.group = self._group
 	local user_data = {}
 	user_data.path = rel_path
@@ -128,7 +133,7 @@ function AUIPlugin.AUIFileRemoteSelectLayout:CreateDirItem(file_name, rel_path, 
 	info.dir.visible = true
 	info.button.drag_trans_target = self._scroll_list
 	info.button:AddEventListener(___all_struct[-449066808], self, self.HandleItemClick)
-	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemSelected)
+	info.button:AddEventListener(___all_struct[958494922], self, self.HandleItemDirSelected)
 	info.button.group = self._group
 	local user_data = {}
 	user_data.path = rel_path
@@ -141,6 +146,14 @@ end
 function AUIPlugin.AUIFileRemoteSelectLayout:HandleSelectConfirmClick(event)
 	if self._cur_selected == nil then
 		g_AUITool:ShowNotice("提示", "请先选中文件或者文件夹")
+		return
+	end
+	if self._cur_file_or_dir == true and self._select_file_or_dir == false then
+		g_AUITool:ShowNotice("提示", "请选择文件夹")
+		return
+	end
+	if self._cur_file_or_dir == false and self._select_file_or_dir == true then
+		g_AUITool:ShowNotice("提示", "请选择文件")
 		return
 	end
 	if self._thread ~= nil then
@@ -263,8 +276,14 @@ function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemClick(event)
 	end
 end
 
-function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemSelected(event)
+function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemFileSelected(event)
 	self._cur_selected = event.target._user_data
+	self._cur_file_or_dir = true
+end
+
+function AUIPlugin.AUIFileRemoteSelectLayout:HandleItemDirSelected(event)
+	self._cur_selected = event.target._user_data
+	self._cur_file_or_dir = false
 end
 
 function AUIPlugin.AUIFileRemoteSelectLayout:CheckResourceName(name)
