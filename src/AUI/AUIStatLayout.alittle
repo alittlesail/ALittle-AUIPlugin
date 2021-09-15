@@ -24,15 +24,17 @@ public class AUIStatLayout : ALittle.DisplayLayout
         this.AddChild(this._image);
     }
 
-    public fun Init(int point_size, int draw_width, int draw_height)
+    public fun Init([Nullable]int point_size, [Nullable] int draw_width, [Nullable]int draw_height)
     {
+        if (point_size == null) point_size = 1;
         this._point_size = point_size;
         if (this._point_size < 1) this._point_size = 1;
-        this._draw_width = draw_width;
-        if (this._draw_width < 0) this._draw_width = 0;
-        this._draw_height = draw_height;
-        if (this._draw_height < 0) this._draw_height = 0;
-
+        if (draw_width == null) draw_width = 0;
+        if (this._draw_width <= 0) this._draw_width = ALittle.Math_Floor(this.width);
+        else this._draw_width = draw_width;
+        if (draw_height == null) draw_height = 0;
+        if (this._draw_height <= 0) this._draw_height = ALittle.Math_Floor(this.height);
+        else this._draw_height = draw_height;
         this._min_index = 0;
         this._max_index = 0;
         this._sum_value = 0;

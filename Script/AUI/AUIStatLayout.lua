@@ -33,17 +33,28 @@ function AUIPlugin.AUIStatLayout:TCtor()
 end
 
 function AUIPlugin.AUIStatLayout:Init(point_size, draw_width, draw_height)
+	if point_size == nil then
+		point_size = 1
+	end
 	self._point_size = point_size
 	if self._point_size < 1 then
 		self._point_size = 1
 	end
-	self._draw_width = draw_width
-	if self._draw_width < 0 then
-		self._draw_width = 0
+	if draw_width == nil then
+		draw_width = 0
 	end
-	self._draw_height = draw_height
-	if self._draw_height < 0 then
-		self._draw_height = 0
+	if self._draw_width <= 0 then
+		self._draw_width = ALittle.Math_Floor(self.width)
+	else
+		self._draw_width = draw_width
+	end
+	if draw_height == nil then
+		draw_height = 0
+	end
+	if self._draw_height <= 0 then
+		self._draw_height = ALittle.Math_Floor(self.height)
+	else
+		self._draw_height = draw_height
 	end
 	self._min_index = 0
 	self._max_index = 0
